@@ -1,67 +1,5 @@
 <template>
     <v-app>
-        <v-app-bar color="#008080" dark app>
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-toolbar-title class="d-flex align-center"> 
-                <img
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/alloxentric.png-WQlEJS2mNDVHfJLAmhR9JbaAD3urYs.webp"
-                    alt="Alloxentric Logo"
-                    style="width: 26px; height: 26px;"
-                    class="mr-2"
-                />
-                Alloxentric
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-menu bottom left> 
-                <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                    <v-icon>mdi-translate</v-icon> 
-                </v-btn>
-                </template>
-
-                <v-list>
-                <v-list-item
-                    v-for="(item, index) in idiomas"
-                    :key="index"
-                >
-                    <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </v-list-item>
-                </v-list>
-            </v-menu>
-            <v-btn icon>
-                <v-icon>mdi-bell</v-icon>
-            </v-btn>
-            <v-menu bottom left>
-                <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                    <v-avatar>
-                    <img
-                        src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
-                        alt="Generic Profile"
-                    />
-                    </v-avatar>
-                </v-btn>
-                </template>
-
-                <v-list>
-                <v-list-item>
-                    <v-list-item-title>Mario Doe</v-list-item-title> 
-                </v-list-item>
-                </v-list>
-            </v-menu>
-        </v-app-bar>
-
-        <v-navigation-drawer app v-model="drawer">
-            <v-list>
-                <v-list-item v-for="(item, index) in items" :key="index" :to="item.to">
-                <v-list-item-icon>
-                    <v-icon>{{ item.icon }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </v-list-item>
-            </v-list>
-        </v-navigation-drawer>
-
         <v-main>
             <v-container class="p-8 overflow-y-auto">
                 <div class="flex items-center mb-8">
@@ -205,8 +143,7 @@
   
   <style scoped>
   .v-btn {
-    width: 90%; /* Ajusta el ancho del botón al 100% de la columna */
-    /* También puedes usar un valor fijo en píxeles, por ejemplo: width: 40px; */
+    width: 90%; 
   }
   </style>
 
