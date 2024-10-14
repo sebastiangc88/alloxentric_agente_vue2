@@ -8,7 +8,7 @@
         <v-card-subtitle class="contenido_calificaciones">
           <div>
             <span class="score-label">Calificación General</span>
-            <v-rating v-model="generalRating" size="30" color="yellow" readonly></v-rating>
+            <v-rating v-model="generalRating" size="30" color="#008080" readonly></v-rating>
             <span class="general-rating">{{ generalRating }}</span>
             <div>Basado en {{ totalEvaluaciones }} evaluaciones</div>
           </div>
@@ -20,7 +20,7 @@
           <h3>Desglose de Evaluaciones</h3>
           <div v-for="(score, index) in scores" :key="index" class="estrellas">
             <div class="score-label">{{ score.label }}</div>
-            <v-rating v-model="score.value" size="30" color="yellow" readonly></v-rating>
+            <v-rating v-model="score.value" size="30" color="#008080" readonly></v-rating>
             <span class="score-value">{{ score.value }}</span>
           </div>
           <v-divider></v-divider>
@@ -35,7 +35,7 @@
                 <v-list-item-subtitle>{{ comment.date }}</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
-                <v-rating v-model="comment.rating" size="30" color="yellow" readonly></v-rating>
+                <v-rating v-model="comment.rating" size="30" color="#008080" readonly></v-rating>
               </v-list-item-action>
             </v-list-item>
             <v-divider></v-divider>
@@ -95,6 +95,8 @@
   }
   
   h3 {
+    font-weight: bold;
+    color: #008080;
     font-size: 28px;
     margin-top: 20px;
   }
@@ -117,6 +119,7 @@
   
   .comment-text {
     font-size: 20px; /* Aumentar el tamaño del texto de los comentarios */
+    color: #008080;
   }
   
   .v-list-item {

@@ -75,39 +75,31 @@
                         </div>
                         </v-sheet>
 
-                        <!-- Mostrar los días del mes -->
                         <v-sheet class="d-flex flex-wrap">
-                        <div
-                            v-for="(dia, index) in datosMes"
-                            :key="index"
-                            class="pa-2"
-                            :style="{
-                            width: '14.28%',
-                            border: '1px solid #ddd',
-                            color:
-                                esFeriado(dia) ||
-                                (dia && new Date(dia).getDay() === 0)
-                                ? 'red'
-                                : 'inherit',
-                            }"
-                        >
-                            <span v-if="dia">{{ dia.getDate() }}</span>
-                            <span v-if="esFeriado(dia)" class="text-red--text">{{
-                            obtenerNombreFeriado(dia)
-                            }}</span>
-                            <v-list v-if="dia && getDayActivities(dia).length">
-                            <v-list-item
-                                v-for="activity in getDayActivities(dia)"
-                                :key="activity.id"
+                            <div
+                                v-for="(dia, index) in datosMes"
+                                :key="index"
+                                class="pa-2"
+                                :style="{
+                                width: '14.28%',
+                                border: '1px solid #ddd',
+                                color: esFeriado(dia) || (dia && new Date(dia).getDay() === 0) ? 'red' : 'inherit',
+                                flex: '0 0 14.28%' 
+                                }"
                             >
-                                <v-list-item-content>
-                                <v-list-item-title>{{
-                                    activity.date.format('HH:mm')
-                                }} - {{ activity.title }}</v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                            </v-list>
-                        </div>
+                                <span v-if="dia">{{ dia.getDate() }}</span>
+                                <span v-if="esFeriado(dia)" class="text-red--text">{{ obtenerNombreFeriado(dia) }}</span>
+                                <v-list v-if="dia && getDayActivities(dia).length">
+                                <v-list-item
+                                    v-for="activity in getDayActivities(dia)"
+                                    :key="activity.id"
+                                >
+                                    <v-list-item-content>
+                                    <v-list-item-title>{{ activity.date.format('HH:mm') }} - {{ activity.title }}</v-list-item-title>
+                                    </v-list-item-content>
+                                </v-list-item>
+                                </v-list>
+                            </div>
                         </v-sheet>
                     </v-card>
                     </v-col>
