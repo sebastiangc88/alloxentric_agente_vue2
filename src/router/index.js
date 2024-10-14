@@ -10,10 +10,21 @@ import Certificaciones from '../components/certificaciones_agente.vue'
 import Evaluaciones from '../components/evaluaciones_agente.vue'
 import Pagos from '../components/pagos_agente.vue'
 import Soporte from '../components/soporte_agente.vue'
+import Ofertas from '../components/ofertas_agente.vue'
+import Inicio from '../components/inicio_agente.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/', // Redirige la ruta raíz a /registro
+    redirect: '/registro'
+  },
+  {
+    path: '/inicio',
+    name: 'Inicio',
+    component: Inicio
+  },
   {
     path: '/registro',
     name: 'RegistroAgente',
@@ -22,7 +33,13 @@ const routes = [
   {
     path: '/ofertas/:id',
     name: 'DetalleOferta',
-    component: DetalleOferta
+    component: DetalleOferta,
+    props: true
+  },
+  {
+    path: '/ofertas',
+    name: 'Ofertas',
+    component: Ofertas
   },
   {
     path: '/calendario',
@@ -67,4 +84,11 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  if (!localStorage.getItem('agenteRegistrado') && to.path !== '/registro') {
+    next('/registro');
+  } else {
+    next();
+  }
+});
 export default router

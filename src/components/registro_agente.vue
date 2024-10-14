@@ -129,7 +129,11 @@ export default {
     },
     ingresarDatosTributarios() {},
     volverAtras() {},
-    finalizarRegistro() {},
+    finalizarRegistro() {
+      // ... lógica para registrar al agente ...
+      localStorage.setItem('agenteRegistrado', true);
+      this.$router.push('/inicio'); 
+    }
   },
 };
 </script>
