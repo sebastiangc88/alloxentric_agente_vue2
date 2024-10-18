@@ -85,7 +85,7 @@
               <v-icon color="#008080">mdi-account</v-icon> 
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title style="font-weight: bold;">Agente</v-list-item-title>
+              <v-list-item-title>Agente</v-list-item-title>
             </v-list-item-content>
           </template>
 

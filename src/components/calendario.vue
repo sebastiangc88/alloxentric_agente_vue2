@@ -1,116 +1,107 @@
 <template>
-    <v-app>
-      
-      <!-- Contenido Principal -->
-        <v-main class="pt-15">
-            <v-container fluid>
-                <!-- Sección de Control de Entrada -->
-                <v-card class="control-de-entrada mb-6 w-100%" outlined>
-                <v-card-title class="text-h5 font-weight-bold text-[#008080]">
-                    Control de Entrada
-                </v-card-title>
-                <v-card-text>
-                    <v-row align="center" justify="center">
-                    <v-col cols="12" md="4" class="text-center">
-                        <v-icon color="#008080" size="48">mdi-clock-outline</v-icon>
-                        <span class="text-h4 font-weight-bold ml-2">
-                        {{ timeRemaining ? timeRemaining : 'Calculando...' }}
-                        </span>
-                    </v-col>
+  <v-app>
+    <!-- Contenido Principal -->
+    <v-main class="pt-15">
+      <v-container fluid>
+        <!-- Sección de Control de Entrada -->
+        <v-card class="control-de-entrada mb-6 w-100%" outlined>
+          <v-card-title class="text-h5 font-weight-bold text-[#008080]">
+            Control de Entrada
+          </v-card-title>
+          <v-card-text>
+            <v-row align="center" justify="center">
+              <v-col cols="12" md="4" class="text-center">
+                <v-icon color="#008080" size="48">mdi-clock-outline</v-icon>
+                <span class="text-h4 font-weight-bold ml-2">
+                  {{ timeRemaining ? timeRemaining : 'Calculando...' }}
+                </span>
+              </v-col>
 
-                    <v-col cols="12" md="8">
-                        <p>
-                        <strong>Próximo Evento:</strong>
-                        <span v-if="nearestEvent"> {{ nearestEvent.title }} </span>
-                        <span v-else>No hay eventos próximos.</span>
-                        </p>
-                        <p>
-                        <strong>Horario:</strong>
-                        <span v-if="nearestEvent">
-                            {{ nearestEvent.date.format('HH:mm') }}
-                        </span>
-                        <span v-else>--:--</span>
-                        </p>
-                    </v-col>
-                    </v-row>
+              <v-col cols="12" md="8">
+                <p>
+                  <strong>Próximo Evento:</strong>
+                  <span v-if="nearestEvent"> {{ nearestEvent.title }} </span>
+                  <span v-else>No hay eventos próximos.</span>
+                </p>
+                <p>
+                  <strong>Horario:</strong>
+                  <span v-if="nearestEvent">
+                    {{ nearestEvent.date.format('HH:mm') }}
+                  </span>
+                  <span v-else>--:--</span>
+                </p>
+              </v-col>
+            </v-row>
 
-                    <v-btn color="#008080" dark block @click="iniciarTurno">
-                    Iniciar Turno
-                    </v-btn>
-                </v-card-text>
-                </v-card>
+            <v-btn color="#008080" dark block @click="iniciarTurno">
+              Iniciar Turno
+            </v-btn>
+          </v-card-text>
+        </v-card>
 
-                <!-- Sección del Calendario -->
-                <div class="control-de-calendario">
-                <h1 class="text-3xl font-bold mb-6 text-[#008080]">
-                    Calendario de Actividades
-                </h1>
-                <v-row>
-                    <v-col cols="12" md="12">
-                    <v-card>
-                        <v-card-title class="justify-space-between">
-                        <v-btn icon @click="mesAnterior">
-                            <v-icon>mdi-chevron-left</v-icon>
-                        </v-btn>
-                        <span class="text-xl font-semibold">{{ mesActual }}</span>
-                        <v-btn icon @click="mesSiguiente">
-                            <v-icon>mdi-chevron-right</v-icon>
-                        </v-btn>
-                        </v-card-title>
-                        <v-divider></v-divider>
-
-                        <!-- Mostrar los días de la semana -->
-                        <v-sheet class="d-flex flex-wrap">
-                        <div
-                            v-for="(diaSemana, index) in diasSemana"
-                            :key="index"
-                            class="pa-2 text-center font-weight-bold"
-                            :style="{
-                            width: '14.28%',
-                            borderBottom: '2px solid #ddd',
-                            color: diaSemana === 'Dom' ? 'red' : 'inherit',
-                            }"
-                        >
-                            {{ diaSemana }}
-                        </div>
-                        </v-sheet>
-
-                        <v-sheet class="d-flex flex-wrap">
-                            <div
-                                v-for="(dia, index) in datosMes"
-                                :key="index"
-                                class="pa-2"
-                                :style="{
-                                width: '14.28%',
-                                border: '1px solid #ddd',
-                                color: esFeriado(dia) || (dia && new Date(dia).getDay() === 0) ? 'red' : 'inherit',
-                                flex: '0 0 14.28%' 
-                                }"
-                            >
-                                <span v-if="dia">{{ dia.getDate() }}</span>
-                                <span v-if="esFeriado(dia)" class="text-red--text">{{ obtenerNombreFeriado(dia) }}</span>
-                                <v-list v-if="dia && getDayActivities(dia).length">
-                                <v-list-item
-                                    v-for="activity in getDayActivities(dia)"
-                                    :key="activity.id"
-                                >
-                                    <v-list-item-content>
-                                    <v-list-item-title>{{ activity.date.format('HH:mm') }} - {{ activity.title }}</v-list-item-title>
-                                    </v-list-item-content>
-                                </v-list-item>
-                                </v-list>
-                            </div>
-                        </v-sheet>
-                    </v-card>
-                    </v-col>
-                </v-row>
-                </div>
-            </v-container>
-        </v-main>
-    </v-app>
+        <!-- Sección del Calendario -->
+        <div class="control-de-calendario">
+          <h1 class="text-3xl font-bold mb-6 text-[#008080]">
+            Calendario de Actividades
+          </h1>
+          <h2 class="text-5xl font-bold text-[#008080] mb-4">
+            {{ mesActual }} <!-- Mostrar el mes en grande aquí -->
+          </h2>
+          <v-sheet tile height="54" class="d-flex">
+            <v-btn icon class="ma-2" @click="$refs.calendar.prev()">
+              <v-icon>mdi-chevron-left</v-icon>
+            </v-btn>
+            <v-select
+              v-model="type"
+              :items="types"
+              dense
+              outlined
+              hide-details
+              class="ma-2"
+              label="Tipo"
+            ></v-select>
+            <v-select
+              v-model="mode"
+              :items="modes"
+              dense
+              outlined
+              hide-details
+              label="Modo de Superposición de Eventos"
+              class="ma-2"
+            ></v-select>
+            <v-select
+              v-model="weekday"
+              :items="weekdays"
+              dense
+              outlined
+              hide-details
+              label="Días de la Semana"
+              class="ma-2"
+            ></v-select>
+            <v-spacer></v-spacer>
+            <v-btn icon class="ma-2" @click="$refs.calendar.next()">
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-btn>
+          </v-sheet>
+          <v-sheet height="600">
+            <v-calendar
+              ref="calendar"
+              v-model="value"
+              :weekdays="weekday"
+              :type="type"
+              :events="events"
+              :event-overlap-mode="mode"
+              :event-overlap-threshold="30"
+              :event-color="getEventColor"
+              @change="getEvents"
+            ></v-calendar>
+          </v-sheet>
+        </div>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
-        
-    
+
 <script>
 import moment from 'moment-timezone';
 import Holidays from 'date-holidays';
@@ -154,10 +145,36 @@ export default {
       nearestEvent: null,
       interval: null,
       drawer: false, // Estado del drawer lateral
-      idiomas: [
-        { title: 'Español' },
-        { title: 'Inglés' },
-        // Agrega más idiomas si es necesario
+      tipos: ['month', 'week', 'day', '4day'],
+      mode: 'stack',
+      modes: ['stack', 'column'],
+      weekday: [0, 1, 2, 3, 4, 5, 6],
+      weekdays: [
+        { text: 'Dom - Sáb', value: [0, 1, 2, 3, 4, 5, 6] },
+        { text: 'Lun - Dom', value: [1, 2, 3, 4, 5, 6, 0] },
+        { text: 'Lun - Vie', value: [1, 2, 3, 4, 5] },
+        { text: 'Lun, Mié, Vie', value: [1, 3, 5] },
+      ],
+      value: '',
+      events: [],
+      colors: [
+        'blue',
+        'indigo',
+        'deep-purple',
+        'cyan',
+        'green',
+        'orange',
+        'grey darken-1',
+      ],
+      names: [
+        'Reunión',
+        'Feriado',
+        'Días libres',
+        'Viaje',
+        'Evento',
+        'Cumpleaños',
+        'Conferencia',
+        'Fiesta',
       ],
     };
   },
@@ -181,10 +198,7 @@ export default {
 
       for (let i = 1; i <= daysInMonth; i++) {
         daysArray.push(
-          moment
-            .tz(this.fecha, 'America/Santiago')
-            .date(i)
-            .toDate()
+          moment.tz(this.fecha, 'America/Santiago').date(i).toDate()
         );
       }
 
@@ -242,48 +256,44 @@ export default {
             this.timeRemaining = '¡El evento ha comenzado!';
             clearInterval(this.interval);
             this.interval = null;
-            this.findNextEvent(); // Busca el siguiente evento
+            this.findNextEvent(); // Buscar el próximo evento
           } else {
-            this.timeRemaining = `${duration.days()}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
+            this.timeRemaining = `${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
           }
         }, 1000);
-      } else {
-        this.timeRemaining = 'No hay eventos próximos.';
       }
     },
-    mesAnterior() {
-      this.fecha = moment(this.fecha)
-        .tz('America/Santiago')
-        .subtract(1, 'months')
-        .startOf('month')
-        .toDate();
+    getEvents({ start, end }) {
+      const events = [];
+
+      const min = new Date(`${start.date}T00:00:00`);
+      const max = new Date(`${end.date}T23:59:59`);
+      const days = (max.getTime() - min.getTime()) / 86400000;
+      const eventCount = this.rnd(days, days + 20);
+
+      for (let i = 0; i < eventCount; i++) {
+        const allDay = this.rnd(0, 3) === 0;
+        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
+        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
+        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
+        const second = new Date(first.getTime() + secondTimestamp);
+
+        events.push({
+          name: this.names[this.rnd(0, this.names.length - 1)],
+          start: first,
+          end: second,
+          color: this.colors[this.rnd(0, this.colors.length - 1)],
+          timed: !allDay,
+        });
+      }
+
+      this.events = events;
     },
-    mesSiguiente() {
-      this.fecha = moment(this.fecha)
-        .tz('America/Santiago')
-        .add(1, 'months')
-        .startOf('month')
-        .toDate();
+    getEventColor(event) {
+      return event.color;
     },
-    esFeriado(dia) {
-      return this.holidays.some((holiday) =>
-        moment(holiday.date)
-          .tz('America/Santiago')
-          .isSame(moment(dia).tz('America/Santiago'), 'day')
-      );
-    },
-    obtenerNombreFeriado(dia) {
-      const holiday = this.holidays.find((holiday) =>
-        moment(holiday.date)
-          .tz('America/Santiago')
-          .isSame(moment(dia).tz('America/Santiago'), 'day')
-      );
-      return holiday ? holiday.name : '';
-    },
-    getDayActivities(dia) {
-      return this.activities.filter((activity) =>
-        activity.date.isSame(moment(dia).tz('America/Santiago'), 'day')
-      );
+    rnd(a, b) {
+      return Math.floor((b - a + 1) * Math.random()) + a;
     },
   },
 };
@@ -291,18 +301,12 @@ export default {
 
 <style scoped>
 .control-de-entrada {
-  width: 85%;
-  position: fixed;
-  top: 70px;
-  z-index: 50;
-  left: 275px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
 }
 
 .control-de-calendario {
-  width: 85%;
-  position: fixed;
-  top: 300px;
-  z-index: 10;
-  left: 275px;
+  margin-top: 20px;
 }
 </style>
