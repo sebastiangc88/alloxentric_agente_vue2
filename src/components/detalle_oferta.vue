@@ -64,13 +64,13 @@
         </v-col>
 
         <v-col cols="12" md="4" class="mt-md-0 mt-6 d-flex align-center">
-            <v-chip label color="#008080" class="mr-2">
+          <v-chip label color="#008080" class="mr-2">
             <v-icon left>mdi-translate</v-icon>
             Idioma
-            </v-chip>
-            <div>
-            <p class="text-lg font-bold text-[#068180]">Español</p>
-            </div>
+          </v-chip>
+          <div>
+            <p class="text-lg font-bold text-[#068180]">{{ oferta.idioma }} ({{ oferta.nivelIdioma }})</p>
+          </div>
         </v-col>
 
         <v-col cols="12" md="8">
@@ -179,6 +179,10 @@
             { title: 'ES' } 
         ],
         drawer: false,
+        oferta: {
+        idioma: 'Español',
+        nivelIdioma: 'Avanzado',
+        },
       };
     },
     computed: {

@@ -54,7 +54,9 @@
                   <v-label class="font-weight-bold black--text">Tipo de Agente (selección múltiple)</v-label>
                   <v-checkbox-group v-model="tiposAgenteSeleccionados">
                     <v-checkbox v-for="tipo in tiposAgenteDisponibles" :key="tipo" :label="tipo" :value="tipo.toLowerCase()" dense></v-checkbox>
+                    <v-text-field v-if="tiposAgenteSeleccionados.includes('otro')" v-model="otroTipoAgente" label="Otro tipo de agente" dense outlined class="mt-1"></v-text-field>
                   </v-checkbox-group>
+
 
                   <v-label class="font-weight-bold black--text mt-4">Años de experiencia</v-label>
                   <v-text-field v-model="experiencia" label="Ingrese sus años de experiencia" type="number" dense outlined class="mt-1"></v-text-field>
@@ -63,9 +65,29 @@
                   <v-textarea v-model="habilidades" label="Describa brevemente sus principales habilidades y competencias." dense outlined class="mt-1"></v-textarea>
 
                   <v-label class="font-weight-bold black--text mt-4">Idioma (selección múltiple)</v-label>
-                  <v-checkbox-group v-model="idiomasSeleccionados">
-                    <v-checkbox v-for="idioma in idiomasDisponibles" :key="idioma" :label="idioma" :value="idioma.toLowerCase()" dense></v-checkbox>
-                  </v-checkbox-group>
+                  <div v-for="idioma in idiomasDisponibles" :key="idioma">
+                    <v-row dense class="align-center">
+                      <v-col cols="auto">
+                        <v-checkbox v-model="idiomasSeleccionados" :value="idioma.toLowerCase()" dense></v-checkbox>
+                      </v-col>
+                      <v-col cols="auto">
+                        <span>{{ idioma }}</span>
+                      </v-col>
+                      <v-col>
+                        <v-select
+                          v-if="idiomasSeleccionados.includes(idioma.toLowerCase())"
+                          v-model="nivelIdioma[idioma.toLowerCase()]"
+                          :items="nivelesIdioma"
+                          label="Nivel"
+                          dense
+                          outlined
+                          class="mt-1"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                  </div>
+                  <v-text-field v-if="idiomasSeleccionados.includes('otro')" v-model="otroIdioma" label="Otro idioma" dense outlined class="mt-1"></v-text-field>
+                  
                 </v-col>
               </v-row>
             </v-form>
@@ -108,6 +130,7 @@ export default {
         'Agente de Servicios',
         'Agente de Cobranzas',
         'Agente de Ventas',
+        'Otro',
       ],
       idiomasDisponibles: ['Español', 'Inglés', 'Portugués', 'Otro'],
       drawer: false,
@@ -118,6 +141,10 @@ export default {
         { title: 'Agente', icon: 'mdi-account', to: '/agente' },
       ],
       idiomas: [{ title: 'ES' }, { title: 'EN' }],
+      nivelesIdioma: ['Nativo', 'Avanzado', 'Medio', 'Básico'],
+      nivelIdioma: {},
+      otroTipoAgente: '', // Variable para el nuevo tipo de agente
+      otroIdioma: '', // Variable para el nuevo idioma
     };
   },
   methods: {
