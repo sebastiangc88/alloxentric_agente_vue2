@@ -14,7 +14,13 @@ exports.getFaqs = async (req, res) => {
 exports.createFaq = async (req, res) => {
   try {
     const { pregunta, respuesta } = req.body;
-    const faq = new Faq({ pregunta, respuesta });
+    const userId = req.userId; // Extraer el ID del usuario desde el request
+
+    if (!userId) {
+      return res.status(400).json({ message: 'Usuario no identificado' });
+    }
+
+    const faq = new Faq({ pregunta, respuesta, usuario: userId });
     await faq.save();
     res.status(201).json(faq);
   } catch (error) {
