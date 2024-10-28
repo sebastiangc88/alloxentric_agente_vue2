@@ -1,18 +1,18 @@
 const express = require('express');
 const { getFaqs, createFaq, updateFaq, deleteFaq } = require('../controllers/faqController');
-const router = express.Router();
 const verifyToken = require('../middlewares/authMiddleware');
+const router = express.Router();
 
-// Obtener todas las FAQs
-router.get('/faqs', verifyToken, getFaqs);
+// Obtener todas las FAQs (GET)
+router.get('/', verifyToken, getFaqs);
 
-// Crear una nueva FAQ
-router.post('/faqs', verifyToken, createFaq);
+// Crear una nueva FAQ (POST)
+router.post('/', verifyToken, createFaq); // Debe ser router.post('/')
 
-// Actualizar una FAQ existente
-router.put('/faqs/:id', verifyToken, updateFaq);
+// Actualizar una FAQ existente (PUT)
+router.put('/:id', verifyToken, updateFaq);
 
-// Eliminar una FAQ
-router.delete('/faqs/:id', verifyToken, deleteFaq);
+// Eliminar una FAQ (DELETE)
+router.delete('/:id', verifyToken, deleteFaq);
 
 module.exports = router;
