@@ -4,7 +4,7 @@
         <v-col cols="12">
           <v-card>
             <v-card-title class="headline d-flex justify-space-between align-center">
-              <h1 class ="titulo">Cartola de Pagos</h1>
+              <h1 class ="text-h5 font-weight-bold text-primary white--text ">Cartola de Pagos</h1>
               <v-btn color="primary" fab small dark @click="descargarReporte">
                 <v-icon>mdi-download</v-icon>
               </v-btn>

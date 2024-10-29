@@ -17,7 +17,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <router-link :to="`/ofertas/${offer.id}`"> 
-                    <v-btn color="#008080">Ver Detalle</v-btn>
+                    <v-btn color="#008080" class="white--text">Ver Detalle</v-btn>
                   </router-link>
                 </v-card-actions>
               </v-card>

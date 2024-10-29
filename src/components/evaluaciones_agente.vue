@@ -2,7 +2,7 @@
     <v-container class="caja_calificaciones">
       <v-card>
         <v-card-title class="titulo">
-          <h1>Evaluaciones</h1>
+          <h1 class="text-h5 font-weight-bold text-primary white--text">Evaluaciones</h1>
         </v-card-title>
   
         <v-card-subtitle class="contenido_calificaciones">
@@ -20,7 +20,7 @@
           <h3>Desglose de Evaluaciones</h3>
           <div v-for="(score, index) in scores" :key="index" class="estrellas">
             <div class="score-label">{{ score.label }}</div>
-            <v-rating v-model="score.value" size="30" color="#008080" readonly></v-rating>
+            <v-rating v-model="score.value" size="25" color="#008080" readonly></v-rating>
             <span class="score-value">{{ score.value }}</span>
           </div>
           <v-divider></v-divider>
@@ -28,14 +28,14 @@
           <v-list>
             <v-list-item v-for="(comment, index) in recentComments" :key="index">
               <v-list-item-action>
-                <v-icon size="50">mdi-account</v-icon> <!-- Ícono de cuenta -->
+                <v-icon size="40">mdi-account</v-icon> <!-- Ícono de cuenta -->
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title class="comment-text">{{ comment.text }}</v-list-item-title>
                 <v-list-item-subtitle>{{ comment.date }}</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
-                <v-rating v-model="comment.rating" size="30" color="#008080" readonly></v-rating>
+                <v-rating v-model="comment.rating" size="25" color="#008080" readonly></v-rating>
               </v-list-item-action>
             </v-list-item>
             <v-divider></v-divider>
@@ -45,7 +45,7 @@
         <v-divider></v-divider>
   
         <v-card-actions>
-          <v-btn color="primary" large>Ver Todas las Evaluaciones</v-btn>
+          <v-btn color="#008080" class="white--text" large>Ver Todas las Evaluaciones</v-btn>
           <v-btn color="secondary" large>Descargar Reporte</v-btn>
         </v-card-actions>
       </v-card>

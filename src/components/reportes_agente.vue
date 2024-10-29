@@ -112,7 +112,7 @@
                             <td>{{ recompensa.nombre }}</td>
                             <td>{{ recompensa.puntos }}</td>
                             <td>
-                              <v-btn color="primary" small @click="canjearRecompensa(recompensa)">
+                              <v-btn color="#008080" class="white--text" small @click="canjearRecompensa(recompensa)">
                                 Canjear
                               </v-btn>
                             </td>

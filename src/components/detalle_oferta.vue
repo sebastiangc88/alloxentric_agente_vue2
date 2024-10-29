@@ -54,7 +54,7 @@
         </v-col>
 
         <v-col cols="12" md="4" class="mt-md-0 mt-6 d-flex align-center">
-            <v-chip label color="#008080" class="mr-2">
+            <v-chip label color="#008080" class="white--text mr-2">
             <v-icon left>mdi-star</v-icon>
             Experiencia
             </v-chip>
@@ -64,7 +64,7 @@
         </v-col>
 
         <v-col cols="12" md="4" class="mt-md-0 mt-6 d-flex align-center">
-            <v-chip label color="#008080" class="mr-2">
+            <v-chip label color="#008080" class="white--text mr-2">
             <v-icon left>mdi-translate</v-icon>
             Idioma
             </v-chip>
@@ -79,14 +79,14 @@
             <p class="text-gray-700">Miembro desde 10 de diciembre 2023</p>
             <p class="font-semibold text-[#068180]">Vitalia Tech</p>
             <div class="d-flex align-center mt-2">
-                <v-chip label color="#008080" small class="mr-2">
+                <v-chip label color="#008080" small class="white--text mr-2">
                 <v-icon left small>mdi-map-marker</v-icon>
                 País
                 </v-chip>
                 <span>Mexico</span>
             </div>
             <div class="d-flex align-center mt-2">
-                <v-chip label color="#008080" small class="mr-2">
+                <v-chip label color="#008080" small class="white--text mr-2">
                 <v-icon left small>mdi-shape</v-icon>
                 Categoría
                 </v-chip>
@@ -135,7 +135,7 @@
         <v-btn
         block
         color="#008080"
-        class="text-white py-2 px-4 rounded transition-all duration-300 hover:scale-105"
+        class="white--text py-2 px-4 rounded transition-all duration-300 hover:scale-105"
         @click="postularse"
         >
         Postular a Horarios Seleccionados

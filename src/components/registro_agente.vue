@@ -1,6 +1,5 @@
 <template>
   <v-app>
-
     <v-main>
       <v-container class="fill-height d-flex flex-column justify-center align-center">
         <v-card class="mx-auto py-6 px-8" max-width="1200" elevation="3">
@@ -63,9 +62,48 @@
                   <v-textarea v-model="habilidades" label="Describa brevemente sus principales habilidades y competencias." dense outlined class="mt-1"></v-textarea>
 
                   <v-label class="font-weight-bold black--text mt-4">Idioma (selección múltiple)</v-label>
-                  <v-checkbox-group v-model="idiomasSeleccionados">
-                    <v-checkbox v-for="idioma in idiomasDisponibles" :key="idioma" :label="idioma" :value="idioma.toLowerCase()" dense></v-checkbox>
+                  <v-checkbox-group v-model="idiomasSeleccionados" class="mb-2">
+                    <v-checkbox
+                      v-for="idioma in idiomasDisponibles"
+                      :key="idioma"
+                      :label="idioma"
+                      :value="idioma.toLowerCase()"
+                      @change="toggleIdioma(idioma.toLowerCase())"
+                      dense
+                    ></v-checkbox>
                   </v-checkbox-group>
+
+                  <!-- Selector de nivel de idioma para cada idioma seleccionado -->
+                  <div v-for="idioma in idiomasSeleccionados" :key="idioma" class="mt-2">
+                    <v-select
+                      v-if="idioma !== 'otro'"
+                      v-model="nivelesIdioma[idioma]"
+                      :items="niveles"
+                      :label="`Nivel de ${idioma.charAt(0).toUpperCase() + idioma.slice(1)}`"
+                      @change="cambiarNivelIdioma(idioma, nivelesIdioma[idioma])"
+                      dense
+                      outlined
+                    ></v-select>
+                    <!-- Campo de entrada para el idioma personalizado y nivel de idioma -->
+                    <div v-if="idioma === 'otro'">
+                      <v-text-field
+                        v-model="otroIdioma"
+                        label="Especifique el idioma"
+                        dense
+                        outlined
+                        class="mt-1"
+                      ></v-text-field>
+                      <v-select
+                        v-model="nivelesIdioma[idioma]"
+                        :items="niveles"
+                        label="Nivel de idioma personalizado"
+                        @change="cambiarNivelIdioma(idioma, nivelesIdioma[idioma])"
+                        dense
+                        outlined
+                        class="mt-1"
+                      ></v-select>
+                    </div>
+                  </div>
                 </v-col>
               </v-row>
             </v-form>
@@ -100,6 +138,8 @@ export default {
       experiencia: '',
       habilidades: '',
       idiomasSeleccionados: [],
+      nivelesIdioma: {},
+      otroIdioma: '',
       tiposAgenteSeleccionados: [],
       paises: ['Argentina', 'Chile', 'México', 'Perú'],
       generos: ['Masculino', 'Femenino', 'Otro'],
@@ -110,14 +150,7 @@ export default {
         'Agente de Ventas',
       ],
       idiomasDisponibles: ['Español', 'Inglés', 'Portugués', 'Otro'],
-      drawer: false,
-      items: [
-        { title: 'Inicio', icon: 'mdi-home', to: '/' },
-        { title: 'Ofertas', icon: 'mdi-briefcase', to: '/ofertas' },
-        { title: 'Calendario', icon: 'mdi-calendar', to: '/calendario' },
-        { title: 'Agente', icon: 'mdi-account', to: '/agente' },
-      ],
-      idiomas: [{ title: 'ES' }, { title: 'EN' }],
+      niveles: ['Básico', 'Intermedio', 'Avanzado', 'Nativo'],
     };
   },
   methods: {
@@ -130,10 +163,33 @@ export default {
     ingresarDatosTributarios() {},
     volverAtras() {},
     finalizarRegistro() {
-      // ... lógica para registrar al agente ...
       localStorage.setItem('agenteRegistrado', true);
       this.$router.push('/inicio'); 
-    }
+    },
+    
+    // Método para alternar la selección de idiomas y nivel predeterminado
+    toggleIdioma(idioma) {
+      const index = this.idiomasSeleccionados.indexOf(idioma);
+      if (index > -1) {
+        this.idiomasSeleccionados.splice(index, 1);
+        this.$delete(this.nivelesIdioma, idioma); // Elimina el nivel si el idioma se desmarca
+        if (idioma === 'otro') this.otroIdioma = ''; // Limpia el campo de idioma personalizado
+      } else {
+        this.idiomasSeleccionados.push(idioma);
+        if (idioma !== 'otro') {
+          this.$set(this.nivelesIdioma, idioma, 'Básico'); // Establece 'Básico' como nivel predeterminado
+        } else {
+          this.$set(this.nivelesIdioma, idioma, 'Básico'); // Nivel predeterminado para idioma personalizado
+        }
+      }
+    },
+    
+    // Método para actualizar el nivel de idioma seleccionado
+    cambiarNivelIdioma(idioma, nivel) {
+      if (this.idiomasSeleccionados.includes(idioma)) {
+        this.$set(this.nivelesIdioma, idioma, nivel);
+      }
+    },
   },
 };
 </script>

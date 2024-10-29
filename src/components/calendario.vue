@@ -44,7 +44,7 @@
           <h1 class="text-3xl font-bold mb-6 text-[#008080]">
             Calendario de Actividades
           </h1>
-          <h2 class="text-5xl font-bold text-[#008080] mb-4">
+          <h2 class ="text-h5 font-weight-bold text-[#008080] ">
             {{ mesActual }} <!-- Mostrar el mes en grande aquí -->
           </h2>
           <v-sheet tile height="54" class="d-flex">

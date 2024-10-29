@@ -4,7 +4,7 @@
         <v-col cols="12">
           <v-card>
             <v-card-title class="headline">
-              <h1 class="titulo">Certificaciones y Cursos</h1>
+              <h1 class="text-h5 font-weight-bold text-primary white--text">Certificaciones y Cursos</h1>
             </v-card-title>
             <v-card-text>
               <v-row class="contenido_caja">
