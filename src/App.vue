@@ -92,7 +92,7 @@
           <router-link to="/agente/postulaciones" class="sidebar-btn">
             <v-list-item>
               <v-list-item-icon>
-                <v-icon style="color:#008080">mdi-clipboard-text</v-icon>
+                <v-icon style="color:#008080" class="ml-5">mdi-clipboard-text</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>Postulaciones</v-list-item-title>
@@ -103,7 +103,7 @@
           <router-link to="/agente/certificaciones" class="sidebar-btn">
             <v-list-item>
               <v-list-item-icon>
-                <v-icon style="color:#008080">mdi-certificate</v-icon>
+                <v-icon style="color:#008080" class="ml-5">mdi-certificate</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>Certificaciones</v-list-item-title>
@@ -114,7 +114,7 @@
           <router-link to="/agente/evaluaciones" class="sidebar-btn">
             <v-list-item>
               <v-list-item-icon>
-                <v-icon style="color:#008080">mdi-chart-pie</v-icon>
+                <v-icon style="color:#008080" class="ml-5">mdi-chart-pie</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>Evaluaciones</v-list-item-title>
@@ -125,7 +125,7 @@
           <router-link to="/agente/pagos" class="sidebar-btn">
             <v-list-item>
               <v-list-item-icon>
-                <v-icon style="color:#008080">mdi-cash</v-icon>
+                <v-icon style="color:#008080" class="ml-5">mdi-cash</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>Pagos</v-list-item-title>
@@ -136,7 +136,7 @@
           <router-link to="/agente/reportes" class="sidebar-btn">
             <v-list-item>
               <v-list-item-icon>
-                <v-icon style="color:#008080">mdi-chart-bar</v-icon>
+                <v-icon style="color:#008080" class="ml-5">mdi-chart-bar</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>Reportes</v-list-item-title>
