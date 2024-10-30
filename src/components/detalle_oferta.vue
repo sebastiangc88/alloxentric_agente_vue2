@@ -2,28 +2,16 @@
   <v-app>
     <v-main>
       <v-container class="p-8 overflow-y-auto">
-        <v-row class="align-center mb-8">
-          <v-col cols="auto">
-            <v-btn icon color="#008080" @click="$router.go(-1)">
-              <v-icon>mdi-arrow-left</v-icon>
-            </v-btn>
-          </v-col>
-          <v-col>
-            <h1 class="text-2xl font-bold text-[#068180]">Agente de Servicio Freelance</h1>
-          </v-col>
-        </v-row>
-
-
         <v-row justify="center">
           <v-col cols="12" md="8">
-            <div class="mb-6 text-center"> 
+            <div class="mb-6 text-center">
               <p class="text-sm text-gray-500">Publicado Hoy</p>
               <p class="text-sm text-gray-500">
                 <v-icon small color="red">mdi-map-marker</v-icon> Mexico/Chile
               </p>
             </div>
 
-            <section class="mb-6 text-center"> 
+            <section class="mb-6 text-center">
               <h2 class="text-xl font-semibold mb-2 text-[#068180]">¿Que Buscamos?</h2>
               <p class="text-gray-700">
                 Buscamos un agente de servicio freelance con experiencia en atención al cliente y resolución de problemas.
@@ -31,69 +19,74 @@
                 y trabajar eficientemente en un entorno de ritmo rápido.
               </p>
             </section>
+
+            <v-col cols="12">
+              <v-card class="mx-auto" max-width="1200">
+                <v-card-text>
+                  <v-row class="remuneracion-row">
+                    <v-col cols="12" md="4" class="text-center">
+                      <h3 class="text-lg font-semibold text-[#068180]">Remuneración por hora</h3>
+                      <p class="text-xl font-bold text-[#068180]">$15 USD</p>
+                    </v-col>
+                    <v-col cols="12" md="4" class="text-center">
+                      <h3 class="text-lg font-semibold text-[#068180]">Bonificaciones por rendimiento</h3>
+                      <p class="text-xl font-bold text-[#068180]">Hasta $5 USD/hora</p>
+                    </v-col>
+                    <v-col cols="12" md="4" class="text-center">
+                      <h3 class="text-lg font-semibold text-[#068180]">Puntos Alloxentric</h3>
+                      <p class="text-xl font-bold text-[#068180]">100 pts/hora</p>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
+            </v-col>
           </v-col>
 
-          <v-col cols="12">
-            <v-card class="mx-auto" max-width="1200">
-              <v-card-text>
-                <v-row class="remuneracion-row">
-                  <v-col cols="12" md="4" class="text-center">
-                    <h3 class="text-lg font-semibold text-[#068180]">Remuneración por hora</h3>
-                    <p class="text-xl font-bold text-[#068180]">$15 USD</p>
-                  </v-col>
-                  <v-col cols="12" md="4" class="text-center">
-                    <h3 class="text-lg font-semibold text-[#068180]">Bonificaciones por rendimiento</h3>
-                    <p class="text-xl font-bold text-[#068180]">Hasta $5 USD/hora</p>
-                  </v-col>
-                  <v-col cols="12" md="4" class="text-center">
-                    <h3 class="text-lg font-semibold text-[#068180]">Puntos Alloxentric</h3>
-                    <p class="text-xl font-bold text-[#068180]">100 pts/hora</p>
-                  </v-col>
-                </v-row>
-              </v-card-text>
+          <v-col cols="12" md="4">
+            <v-card class="pa-4" color="#f5f5dc" tile>
+              <v-row>
+                <v-col cols="6">
+                  <v-chip small label color="#008080" class="mr-2 white--text">
+                    <v-icon left color="#008080">mdi-star</v-icon>
+                    Experiencia
+                  </v-chip>
+                  <div>
+                    <p class="text-lg font-bold text-[#008080]">Intermedia</p>
+                  </div>
+                </v-col>
+                <v-col cols="6">
+                  <v-chip small label color="#008080" class="mr-2 white--text">
+                    <v-icon left color="#008080">mdi-translate</v-icon>
+                    Idioma
+                  </v-chip>
+                  <div>
+                    <p class="text-lg font-bold text-[#008080]">Español (Avanzado)</p>
+                  </div>
+                </v-col>
+              </v-row>
+
+              <v-divider class="my-4"></v-divider>
+
+              <section class="text-center">
+                <h2 class="text-xl font-semibold mb-2 text-[#008080]">Sobre el cliente</h2>
+                <div class="d-flex align-center justify-center mt-2">
+                  <v-rating
+                    v-model="cliente.rating"
+                    readonly
+                    color="#008080"
+                    background-color="grey lighten-1"
+                    size="small"
+                  ></v-rating>
+                  <span class="ml-2">({{ cliente.rating }})</span>
+                </div>
+                <p class="text-gray-700 mt-2">Miembro desde {{ cliente.miembroDesde }}</p>
+                <p class="font-semibold text-[#008080]">{{ cliente.nombre }}</p>
+                <div class="d-flex align-center justify-center mt-2">
+                  <v-icon small left color="#008080">mdi-map-marker</v-icon>
+                  <span>{{ cliente.pais }}</span>
+                </div>
+              </section>
             </v-card>
-          </v-col>
-
-          <v-col cols="12" md="4" class="mt-md-0 mt-6 d-flex align-center justify-center"> 
-            <v-chip label color="#008080" class="white--text mr-2">
-              <v-icon left>mdi-star</v-icon>
-              Experiencia
-            </v-chip>
-            <div>
-              <p class="text-lg font-bold text-[#068180]">Intermedia</p>
-            </div>
-          </v-col>
-
-          <v-col cols="12" md="4" class="mt-md-0 mt-6 d-flex align-center justify-center"> 
-            <v-chip label color="#008080" class="white--text mr-2">
-              <v-icon left>mdi-translate</v-icon>
-              Idioma
-            </v-chip>
-            <div>
-              <p class="text-lg font-bold text-[#068180]">Español (Avanzado)</p> 
-            </div>
-          </v-col>
-
-          <v-col cols="12" md="8">
-            <section class="mb-6 text-center"> 
-              <h2 class="text-xl font-semibold mb-2 text-[#068180]">Sobre el cliente</h2>
-              <p class="text-gray-700">Miembro desde 10 de diciembre 2023</p>
-              <p class="font-semibold text-[#068180]">Vitalia Tech</p>
-              <div class="d-flex align-center justify-center mt-2"> 
-                <v-chip label color="#008080" small class="white--text mr-2">
-                  <v-icon left small>mdi-map-marker</v-icon>
-                  País
-                </v-chip>
-                <span>Mexico</span>
-              </div>
-              <div class="d-flex align-center justify-center mt-2"> 
-                <v-chip label color="#008080" small class="white--text mr-2">
-                  <v-icon left small>mdi-shape</v-icon>
-                  Categoría
-                </v-chip>
-                <span>Salud y Bienestar</span>
-              </div>
-            </section>
           </v-col>
         </v-row>
 
@@ -190,6 +183,12 @@
         ],
         drawer: false,
         showEarnings: false,
+        cliente: {
+          nombre: 'Vitalia Tech',
+          rating: 4.9,
+          miembroDesde: '10 de diciembre 2023',
+          pais: 'Mexico',
+        },
       };
 
     },
@@ -238,5 +237,13 @@
     z-index: 10;
     font-size: 18px; /* Ajusta el tamaño de la fuente */
     padding: 12px 20px; /* Ajusta el padding */
+  }
+  .ajustar-al-texto {
+    display: inline-block; 
+  }
+  .experiencia-idioma {
+    display: inline-flex; /* Ajusta el contenedor al contenido */
+    flex-wrap: wrap; /* Permite que los elementos se ajusten en varias líneas si es necesario */
+    justify-content: center; /* Centra los elementos horizontalmente */
   }
 </style>

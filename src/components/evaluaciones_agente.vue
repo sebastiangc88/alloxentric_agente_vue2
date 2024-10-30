@@ -18,11 +18,18 @@
   
         <v-card-text>
           <h3>Desglose de Evaluaciones</h3>
-          <div v-for="(score, index) in scores" :key="index" class="estrellas">
-            <div class="score-label">{{ score.label }}</div>
-            <v-rating v-model="score.value" size="25" color="#008080" readonly></v-rating>
-            <span class="score-value">{{ score.value }}</span>
-          </div>
+          <v-list>
+            <v-list-item v-for="(score, index) in scores" :key="index">
+              <v-list-item-content>
+                <v-list-item-title class="score-label">{{ score.label }}</v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-rating v-model="score.value" size="25" color="#008080" readonly></v-rating>
+                <span class="score-value">{{ score.value }}</span>
+              </v-list-item-action>
+            </v-list-item>
+            <v-divider></v-divider>
+          </v-list>
           <v-divider></v-divider>
           <h3>Comentarios Recientes</h3>
           <v-list>
@@ -46,7 +53,7 @@
   
         <v-card-actions>
           <v-btn color="#008080" class="white--text" large>Ver Todas las Evaluaciones</v-btn>
-          <v-btn color="secondary" large>Descargar Reporte</v-btn>
+          <v-btn color="#c59760" class="white--text" large>Descargar Reporte</v-btn> 
         </v-card-actions>
       </v-card>
     </v-container>
@@ -114,7 +121,7 @@
   
   .score-value {
     font-size: 24px; /* Aumentar el tamaño de la fuente */
-    margin-left: 10px; /* Espacio entre la calificación y el texto */
+    margin-left: 20px;  /* Espacio entre la calificación y el texto */
   }
   
   .comment-text {
