@@ -31,7 +31,8 @@
           <div>
             <p class="text-h5 font-weight-bold">5,000</p>
             <v-progress-linear
-              color="#007f7f"
+            style="border-radius:15px"
+              color="#007f7f" 
               height="20"
               :value="60" 
             >
@@ -85,6 +86,7 @@
           <div>
             <p>Aceptadas</p>
             <v-progress-linear
+            style="border-radius:15px"
               color="#007f7f"
               height="12"
               :value="40" 
@@ -94,6 +96,7 @@
           <div class="mt-2">
             <p>En Proceso</p>
             <v-progress-linear
+            style="border-radius:15px"
               color="#007f7f"
               height="12"
               :value="60" 
@@ -103,6 +106,7 @@
           <div class="mt-2">
             <p>Rechazadas</p>
             <v-progress-linear
+            style="border-radius:15px"
               color="#007f7f"
               height="12"
               :value="20" 

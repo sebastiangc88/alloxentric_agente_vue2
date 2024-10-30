@@ -70,7 +70,7 @@
                       </v-list-item-content>
                       <v-list-item-action>
                         <v-btn v-if="curso.certificado" color="white" text style="background-color: #008080;">
-                           Certificado
+                           Completado
                         </v-btn>
                         <v-btn v-else color="#008080" class="white--text">
                           Iniciar Curso

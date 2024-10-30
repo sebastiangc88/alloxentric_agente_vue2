@@ -41,7 +41,7 @@
 
         <!-- Sección del Calendario -->
         <v-card class="control-de-calendario mb-6" outlined>
-          <v-card-title class="font-weight-bold text-[#008080] text-center" :style="{ marginLeft: '640px', fontSize: '30px' }">
+          <v-card-title class="font-weight-bold text-[#008080] text-center ml-0" :style="{ marginLeft: '640px', fontSize: '30px' }">
             Calendario de Actividades
           </v-card-title>
           <v-card-subtitle class="text-h5 font-weight-bold text-[#008080] text-center">
@@ -145,7 +145,7 @@ export default {
   },
   computed: {
     mesActual() {
-      return moment(this.fecha).tz('America/Santiago').format('MMMM YYYY');
+      return moment(this.fecha).locale('es').tz('America/Santiago').format('MMMM YYYY');
     },
     datosMes() {
       const startOfMonth = moment(this.fecha).tz('America/Santiago').startOf('month');

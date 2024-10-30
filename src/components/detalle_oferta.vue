@@ -43,20 +43,20 @@
           </v-col>
 
           <v-col cols="12" md="4">
-            <v-card class="pa-4" color="#f5f5dc" tile>
+            <v-card class="pa-4" color="#daf1f9" tile>
               <v-row>
-                <v-col cols="6">
-                  <v-chip small label color="#008080" class="mr-2 white--text">
-                    <v-icon left color="#008080">mdi-star</v-icon>
+                <v-col cols="6" style="text-align: center;">
+                  <v-chip small label color="#008080" class="mr-2 white--text icon-small">
+                    <v-icon left color="white">mdi-star</v-icon>
                     Experiencia
                   </v-chip>
                   <div>
                     <p class="text-lg font-bold text-[#008080]">Intermedia</p>
                   </div>
                 </v-col>
-                <v-col cols="6">
+                <v-col cols="6" style="text-align: center;">
                   <v-chip small label color="#008080" class="mr-2 white--text">
-                    <v-icon left color="#008080">mdi-translate</v-icon>
+                    <v-icon small left color="white">mdi-translate</v-icon>
                     Idioma
                   </v-chip>
                   <div>
@@ -91,10 +91,10 @@
         </v-row>
 
         <section class="mb-6">
-          <v-card class="pa-4 mx-1" color="#b3e5f0"> 
+          <v-card class="pa-4 mx-1" color="#daf1f9"> 
             <h2 class="text-xl font-semibold mb-4 text-[#1e343d]">Horarios Disponibles</h2>
             <div class="overflow-x-auto" >
-              <v-sheet class="inline-block min-w-full" color="#b3e5f0">
+              <v-sheet class="inline-block min-w-full" color="#daf1f9">
                 <v-row no-gutters>
                   <v-col cols="1" class="font-semibold text-center">Hora</v-col>
                   <v-col cols="11/7" v-for="day in days" :key="day" class="font-semibold text-center">
@@ -220,7 +220,7 @@
 </script>
 <style scoped>
   .remuneracion-row {
-    background-color: #b3e5f0;
+    background-color: #daf1f9;
     border-radius: 4px;
     padding: 10px;
     display: flex;
