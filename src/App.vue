@@ -52,7 +52,7 @@
       </v-menu>
     </v-app-bar>
 
-    <v-navigation-drawer app v-model="drawer">
+    <v-navigation-drawer app v-model="drawer" temporary>
       <v-list>
         <router-link to="/inicio">
           <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/inicio') }">
