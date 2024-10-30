@@ -30,7 +30,7 @@
           <v-col cols="12">
             <v-data-table :headers="headers" :items="postulaciones" class="elevation-1">
               <template v-slot:[`item.estado`]="{ item }">
-                <v-chip :color="getColor(item.estado)" dark>
+                <v-chip :color="getColor(item.estado)" dark style="color:black; font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif">
                   {{ item.estado }}
                 </v-chip>
               </template>
@@ -67,9 +67,9 @@
     methods: {
       getColor(estado) {
         // Método que retorna el color basado en el estado de la postulación
-        if (estado === 'Aceptada') return 'green';
-        else if (estado === 'Rechazada') return 'red';
-        return '#EDDC68';
+        if (estado === 'Aceptada') return '#d4e9dc'; //Verde mate
+        else if (estado === 'Rechazada') return '#f6d6d6'; //Rojo mate
+        return '#ffecb3'; //Amarillo mate
       },
     },
   };

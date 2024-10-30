@@ -2,10 +2,10 @@
   <v-app>
     <!-- Contenido Principal -->
     <v-main class="pt-15">
-      <v-container fluid>
+      <v-container fluid class="mx-8">
         <!-- Sección de Control de Entrada -->
         <v-card class="control-de-entrada mb-6 w-100%" outlined>
-          <v-card-title class="text-h5 font-weight-bold text-[#008080]">
+          <v-card-title class="text-h4 font-weight-bold text-[#008080] text-center">
             Control de Entrada
           </v-card-title>
           <v-card-text>
@@ -40,63 +40,67 @@
         </v-card>
 
         <!-- Sección del Calendario -->
-        <div class="control-de-calendario">
-          <h1 class="text-3xl font-bold mb-6 text-[#008080]">
+        <v-card class="control-de-calendario mb-6" outlined>
+          <v-card-title class="font-weight-bold text-[#008080] text-center" :style="{ marginLeft: '640px', fontSize: '30px' }">
             Calendario de Actividades
-          </h1>
-          <h2 class ="text-h5 font-weight-bold text-[#008080] ">
-            {{ mesActual }} <!-- Mostrar el mes en grande aquí -->
-          </h2>
+          </v-card-title>
+          <v-card-subtitle class="text-h5 font-weight-bold text-[#008080] text-center">
+            {{ mesActual }}
+          </v-card-subtitle>
           <v-sheet tile height="54" class="d-flex">
-            <v-btn icon class="ma-2" @click="$refs.calendar.prev()">
+            <v-btn icon class="ma-2" @click="mesAnterior">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
-            <v-select
-              v-model="type"
-              :items="types"
-              dense
-              outlined
-              hide-details
-              class="ma-2"
-              label="Tipo"
-            ></v-select>
-            <v-select
-              v-model="mode"
-              :items="modes"
-              dense
-              outlined
-              hide-details
-              label="Modo de Superposición de Eventos"
-              class="ma-2"
-            ></v-select>
-            <v-select
-              v-model="weekday"
-              :items="weekdays"
-              dense
-              outlined
-              hide-details
-              label="Días de la Semana"
-              class="ma-2"
-            ></v-select>
             <v-spacer></v-spacer>
-            <v-btn icon class="ma-2" @click="$refs.calendar.next()">
+            <v-btn icon class="ma-2" @click="mesSiguiente">
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </v-sheet>
-          <v-sheet height="600">
-            <v-calendar
-              ref="calendar"
-              v-model="value"
-              :weekdays="weekday"
-              :type="type"
-              :events="events"
-              :event-overlap-mode="mode"
-              :event-overlap-threshold="30"
-              :event-color="getEventColor"
-              @change="getEvents"
-            ></v-calendar>
+          <v-sheet class="d-flex flex-wrap">
+            <div
+              v-for="(diaSemana, index) in diasSemana"
+              :key="index"
+              class="pa-2 text-center font-weight-bold"
+              :style="{
+                width: '14.28%',
+                borderBottom: '2px solid #ddd',
+                color: diaSemana === 'Dom' ? 'red' : 'inherit',
+              }"
+            >
+              {{ diaSemana }}
+            </div>
           </v-sheet>
-        </div>
+          <v-sheet class="d-flex flex-wrap" :style="{ border: '2px solid #008080', borderRadius: '8px', padding: '10px', marginTop: '20px' }">
+            <div
+              v-for="(dia, index) in datosMes"
+              :key="index"
+              class="pa-4 d-flex align-center justify-center"
+              :style="{
+                width: '14.28%',
+                height: '120px',
+                border: '1px solid #ddd',
+                color:
+                  esFeriado(dia) || (dia && new Date(dia).getDay() === 0)
+                    ? 'red'
+                    : 'inherit',
+              }"
+            >
+              <div class="text-center">
+                <span v-if="dia" class="text-xl font-weight-bold">{{ dia.getDate() }}</span>
+                <div v-if="esFeriado(dia)" class="mt-2 text-red--text">{{ obtenerNombreFeriado(dia) }}</div>
+                <v-list v-if="dia && getDayActivities(dia).length" class="mt-2">
+                  <v-list-item v-for="activity in getDayActivities(dia)" :key="activity.id">
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ activity.date.format('HH:mm') }} - {{ activity.title }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </div>
+          </v-sheet>
+        </v-card>
       </v-container>
     </v-main>
   </v-app>
@@ -109,9 +113,9 @@ import Holidays from 'date-holidays';
 export default {
   name: 'calendarioActividades',
   data() {
-    const hd = new Holidays('CL'); // Instancia de date-holidays para Chile
-    const currentYear = moment().tz('America/Santiago').year(); // Año actual basado en la zona horaria de Chile
-    const holidays = hd.getHolidays(currentYear); // Obtenemos los feriados para el año actual
+    const hd = new Holidays('CL');
+    const currentYear = moment().tz('America/Santiago').year();
+    const holidays = hd.getHolidays(currentYear);
 
     return {
       fecha: moment().tz('America/Santiago').toDate(),
@@ -119,21 +123,13 @@ export default {
       activities: [
         {
           id: 1,
-          title: 'GESTIÓN DE PROYECTO',
-          date: moment.tz(
-            `${currentYear}-10-15 11:00`,
-            'YYYY-MM-DD HH:mm',
-            'America/Santiago'
-          ),
+          title: 'Gestion proyecto',
+          date: moment.tz(`${currentYear}-10-15 11:00`, 'YYYY-MM-DD HH:mm', 'America/Santiago'),
         },
         {
           id: 2,
           title: 'Atención telefónica',
-          date: moment.tz(
-            `${currentYear}-10-17 08:00`,
-            'YYYY-MM-DD HH:mm',
-            'America/Santiago'
-          ),
+          date: moment.tz(`${currentYear}-10-30 08:00`, 'YYYY-MM-DD HH:mm', 'America/Santiago'),
         },
       ],
       holidays: holidays.map((holiday) => ({
@@ -144,38 +140,7 @@ export default {
       diasSemana: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
       nearestEvent: null,
       interval: null,
-      drawer: false, // Estado del drawer lateral
-      tipos: ['month', 'week', 'day', '4day'],
-      mode: 'stack',
-      modes: ['stack', 'column'],
-      weekday: [0, 1, 2, 3, 4, 5, 6],
-      weekdays: [
-        { text: 'Dom - Sáb', value: [0, 1, 2, 3, 4, 5, 6] },
-        { text: 'Lun - Dom', value: [1, 2, 3, 4, 5, 6, 0] },
-        { text: 'Lun - Vie', value: [1, 2, 3, 4, 5] },
-        { text: 'Lun, Mié, Vie', value: [1, 3, 5] },
-      ],
-      value: '',
-      events: [],
-      colors: [
-        'blue',
-        'indigo',
-        'deep-purple',
-        'cyan',
-        'green',
-        'orange',
-        'grey darken-1',
-      ],
-      names: [
-        'Reunión',
-        'Feriado',
-        'Días libres',
-        'Viaje',
-        'Evento',
-        'Cumpleaños',
-        'Conferencia',
-        'Fiesta',
-      ],
+      drawer: false,
     };
   },
   computed: {
@@ -183,9 +148,7 @@ export default {
       return moment(this.fecha).tz('America/Santiago').format('MMMM YYYY');
     },
     datosMes() {
-      const startOfMonth = moment(this.fecha)
-        .tz('America/Santiago')
-        .startOf('month');
+      const startOfMonth = moment(this.fecha).tz('America/Santiago').startOf('month');
       const endOfMonth = moment(this.fecha).tz('America/Santiago').endOf('month');
       const daysInMonth = endOfMonth.date();
 
@@ -197,9 +160,7 @@ export default {
       }
 
       for (let i = 1; i <= daysInMonth; i++) {
-        daysArray.push(
-          moment.tz(this.fecha, 'America/Santiago').date(i).toDate()
-        );
+        daysArray.push(moment.tz(this.fecha, 'America/Santiago').date(i).toDate());
       }
 
       return daysArray;
@@ -215,12 +176,8 @@ export default {
     }
   },
   methods: {
-    toggleDrawer() {
-      this.drawer = !this.drawer;
-    },
     iniciarTurno() {
       console.log('Turno iniciado');
-      // Aquí puedes añadir la lógica para iniciar el turno.
     },
     actualizarFechaActual() {
       this.fecha = moment().tz('America/Santiago').toDate();
@@ -256,44 +213,36 @@ export default {
             this.timeRemaining = '¡El evento ha comenzado!';
             clearInterval(this.interval);
             this.interval = null;
-            this.findNextEvent(); // Buscar el próximo evento
+            this.findNextEvent();
           } else {
-            this.timeRemaining = `${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
+            this.timeRemaining = `${duration.days()}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
           }
         }, 1000);
+      } else {
+        this.timeRemaining = 'No hay eventos próximos.';
       }
     },
-    getEvents({ start, end }) {
-      const events = [];
-
-      const min = new Date(`${start.date}T00:00:00`);
-      const max = new Date(`${end.date}T23:59:59`);
-      const days = (max.getTime() - min.getTime()) / 86400000;
-      const eventCount = this.rnd(days, days + 20);
-
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0;
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-        const second = new Date(first.getTime() + secondTimestamp);
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: first,
-          end: second,
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-          timed: !allDay,
-        });
-      }
-
-      this.events = events;
+    mesAnterior() {
+      this.fecha = moment(this.fecha).tz('America/Santiago').subtract(1, 'months').startOf('month').toDate();
     },
-    getEventColor(event) {
-      return event.color;
+    mesSiguiente() {
+      this.fecha = moment(this.fecha).tz('America/Santiago').add(1, 'months').startOf('month').toDate();
     },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
+    esFeriado(dia) {
+      return this.holidays.some((holiday) =>
+        moment(holiday.date).tz('America/Santiago').isSame(moment(dia).tz('America/Santiago'), 'day')
+      );
+    },
+    obtenerNombreFeriado(dia) {
+      const holiday = this.holidays.find((holiday) =>
+        moment(holiday.date).tz('America/Santiago').isSame(moment(dia).tz('America/Santiago'), 'day')
+      );
+      return holiday ? holiday.name : '';
+    },
+    getDayActivities(dia) {
+      return this.activities.filter((activity) =>
+        activity.date.isSame(moment(dia).tz('America/Santiago'), 'day')
+      );
     },
   },
 };
@@ -304,9 +253,18 @@ export default {
   background-color: #ffffff;
   border-radius: 8px;
   padding: 20px;
+  width: 90%;
+  left: 100px;
+  
+
 }
 
 .control-de-calendario {
   margin-top: 20px;
+  padding: 20px;
+  border: 2px solid #008080;
+  border-radius: 8px;
+  width: 90%;
+  left: 100px;
 }
 </style>

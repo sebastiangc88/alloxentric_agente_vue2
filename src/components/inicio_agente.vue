@@ -8,7 +8,7 @@
 
     <v-row class="mb-4">
       <v-col cols="12" md="4">
-        <v-card class="pa-4">
+        <v-card class="pa-4 bordered-card" style="border-color: #007f7f">
           <h2 class="text-xl font-weight-bold text-primary">Postulaciones Activas</h2>
           <div>
             <p class="text-h5 font-weight-bold">4</p>
@@ -17,7 +17,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="4">
-        <v-card class="pa-4">
+        <v-card class="pa-4 bordered-card" style="border-color: #007f7f">
           <h2 class="text-xl font-weight-bold text-primary">Ganancias del Mes</h2>
           <div>
             <p class="text-h5 font-weight-bold">$1,500</p>
@@ -26,12 +26,12 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="4">
-        <v-card class="pa-4">
+        <v-card class="pa-4 bordered-card" style="border-color: #007f7f">
           <h2 class="text-xl font-weight-bold text-primary">Puntos Acumulados</h2>
           <div>
             <p class="text-h5 font-weight-bold">5,000</p>
             <v-progress-linear
-              color="#008080"
+              color="#007f7f"
               height="20"
               :value="60" 
             >
@@ -44,7 +44,7 @@
 
     <v-row class="mb-4">
       <v-col cols="12" md="6">
-        <v-card class="pa-4">
+        <v-card class="pa-4 bordered-card" style="border-color: #007f7f">
           <v-card-title class="text-xl font-weight-bold text-primary">Próximas Entrevistas</v-card-title>
           <v-card-subtitle class="text-caption">Sus entrevistas programadas para los próximos días</v-card-subtitle>
           <v-card-text class="pt-4">
@@ -74,18 +74,18 @@
             </v-simple-table>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="#008080" block class="white--text mt-4" @click="goToCalendar">Ver Calendario Completo</v-btn>
+            <v-btn color="#007f7f" block class="white--text mt-4" @click="goToCalendar">Ver Calendario Completo</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
       <v-col cols="12" md="6">
-        <v-card class="pa-4">
+        <v-card class="pa-4 bordered-card" style="border-color: #007f7f">
           <h2 class="text-xl font-weight-bold text-primary">Resumen de Postulaciones</h2>
           <p class="text-caption">Estado actual de sus postulaciones</p>
           <div>
             <p>Aceptadas</p>
             <v-progress-linear
-              color="#008080"
+              color="#007f7f"
               height="12"
               :value="40" 
             ></v-progress-linear>
@@ -94,7 +94,7 @@
           <div class="mt-2">
             <p>En Proceso</p>
             <v-progress-linear
-              color="#008080"
+              color="#007f7f"
               height="12"
               :value="60" 
             ></v-progress-linear>
@@ -103,13 +103,13 @@
           <div class="mt-2">
             <p>Rechazadas</p>
             <v-progress-linear
-              color="#008080"
+              color="#007f7f"
               height="12"
               :value="20" 
             ></v-progress-linear>
             <span>1</span>
           </div>
-          <v-btn color="#008080" block class="white--text mt-4" @click="goToApplications">Ver Todas las Postulaciones</v-btn>
+          <v-btn color="#007f7f" block class="white--text mt-4" @click="goToApplications">Ver Todas las Postulaciones</v-btn>
         </v-card>
       </v-col>
     </v-row>
@@ -129,3 +129,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.bordered-card {
+  border: 2px solid;
+}
+</style>
