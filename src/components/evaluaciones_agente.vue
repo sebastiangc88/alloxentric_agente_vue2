@@ -2,7 +2,7 @@
   <v-container class="caja_calificaciones">
     <v-card>
       <v-card-title class="titulo">
-        <h1 class="text-h5 font-weight-bold text-primary white--text">Evaluaciones</h1>
+        <h1 class="text-h4 font-weight-bold text-primary white--text">Evaluaciones</h1>
       </v-card-title>
 
       <v-card-subtitle class="contenido_calificaciones">

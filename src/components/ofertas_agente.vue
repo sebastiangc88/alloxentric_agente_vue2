@@ -2,7 +2,7 @@
   <v-app>
     <v-main class="pt-15">
       <v-container fluid>
-        <h1 class="text-3xl font-bold mb-6 text-[#008080] ml-14">
+        <h1 class="text-3xl font-bold mb-6 text-[#008080] ml-1">
           Ofertas Disponibles
         </h1>
         <v-row>

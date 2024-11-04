@@ -124,12 +124,12 @@ export default {
         {
           id: 1,
           title: 'Gestion proyecto',
-          date: moment.tz(`${currentYear}-10-15 11:00`, 'YYYY-MM-DD HH:mm', 'America/Santiago'),
+          date: moment.tz(`${currentYear}-11-08 11:00`, 'YYYY-MM-DD HH:mm', 'America/Santiago'),
         },
         {
           id: 2,
           title: 'Atención telefónica',
-          date: moment.tz(`${currentYear}-10-30 08:00`, 'YYYY-MM-DD HH:mm', 'America/Santiago'),
+          date: moment.tz(`${currentYear}-11-10 08:00`, 'YYYY-MM-DD HH:mm', 'America/Santiago'),
         },
       ],
       holidays: holidays.map((holiday) => ({

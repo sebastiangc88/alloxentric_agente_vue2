@@ -5,7 +5,7 @@
           <v-card>
             <v-card-title class="headline d-flex justify-space-between align-center">
               <h1 class ="text-h5 font-weight-bold text-primary white--text ">Cartola de Pagos</h1>
-              <v-btn color="primary" fab small dark @click="descargarReporte">
+              <v-btn color="#FFB74D" fab small dark @click="descargarReporte">
                 <v-icon>mdi-download</v-icon>
               </v-btn>
             </v-card-title>
