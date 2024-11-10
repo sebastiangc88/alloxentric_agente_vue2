@@ -2,7 +2,11 @@
   <v-container>
     <v-row class="mb-6">
       <v-col cols="12">
-        <h1 class="text-h4 font-weight-bold text-primary mt-6">Bienvenido, Tomas</h1>
+        <h1 class="text-h4 font-weight-bold text-primary mt-6">Bienvenido, {{ nombreCompleto }}
+          <span v-if="nombreCompleto === 'Usuario'">
+            (<a  @click.prevent="redirigirRegistro">Regístre sus datos aquí</a>)
+          </span>
+        </h1>
       </v-col>
     </v-row>
 
@@ -122,6 +126,17 @@
 
 <script>
 export default {
+
+  data() {
+    return {
+      nombreCompleto: ''
+    };
+  },
+  mounted() {
+    // Recupera el nombre completo de localStorage al montar el componente
+    this.nombreCompleto = localStorage.getItem('nombreCompleto') || 'Usuario';
+  },
+
   name: 'MainInicio',
   methods: {
     goToCalendar() {
@@ -129,6 +144,9 @@ export default {
     },
     goToApplications() {
       this.$router.push({ name: 'postulaciones' });
+    },
+    redirigirRegistro() {
+      this.$router.push({ name: 'RegistroAgente' });
     }
   }
 };

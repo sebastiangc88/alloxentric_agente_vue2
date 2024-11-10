@@ -1,4 +1,3 @@
-// App.vue
 <template>
   <v-app>
     <v-app-bar color="#008080" dark app>
@@ -46,7 +45,12 @@
 
         <v-list>
           <v-list-item>
-            <v-list-item-title>Mario Doe</v-list-item-title>
+            <v-list-item-title>{{ nombreCompleto }}</v-list-item-title>
+            <v-list-item-subtitle>{{ correoUsuario }}</v-list-item-subtitle>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item @click="irConfiguracionCuenta">
+            <v-list-item-title>Configuración de cuenta</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -171,7 +175,21 @@ export default {
       drawer: false,
       idiomas: [{ title: 'ES' }],
       agentExpanded: false,
+      nombreCompleto: 'Usuario', // Inicializa con un valor por defecto
+      correoUsuario: '' // Inicializa el correo
     };
   },
+  mounted() {
+    // Recupera el nombre completo y el correo del usuario del localStorage
+    this.nombreCompleto = localStorage.getItem('nombreCompleto') || 'Usuario';
+    this.correoUsuario = localStorage.getItem('correoUsuario') || '';
+  },
+  methods: {
+    irConfiguracionCuenta() {
+    if (this.$route.path !== '/configuracion') {
+      this.$router.push('/configuracion');
+    }
+  }
+  }
 };
 </script>

@@ -24,9 +24,9 @@ function verifyToken(req, res, next) {
       return res.status(401).json({ message: 'Token inválido' });
     }
     
-    // Guardar el ID del usuario decodificado para futuras referencias
+    // Guardar el usuario decodificado en req.user para acceso en los controladores
     console.log("Token válido, usuario decodificado:", decoded);
-    req.userId = decoded.id;
+    req.user = { id: decoded.id }; // Almacena el id del usuario en req.user
     next();
   });
 }

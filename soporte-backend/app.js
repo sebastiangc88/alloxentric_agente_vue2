@@ -1,4 +1,6 @@
 require('dotenv').config();
+console.log("Mongo URI:", process.env.MONGO_URI);
+console.log("JWT Secret:", process.env.JWT_SECRET);
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -18,10 +20,12 @@ mongoose.connect(process.env.MONGO_URI)
 const faqRoutes = require('./routes/faqRoutes');
 const ticketRoutes = require('./routes/ticketRoutes');
 const userRoutes = require('./routes/userRoutes');
+const agenteRoutes = require('./routes/agenteRoutes');
 
 // Usar rutas
 app.use('/api/soporte/faqs', faqRoutes);
 app.use('/api/soporte/tickets', ticketRoutes);
 app.use('/api/soporte', userRoutes);
+app.use('/api/agentes', agenteRoutes);
 
 module.exports = app;

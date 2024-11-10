@@ -1,34 +1,41 @@
 // router/index.js
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import DetalleOferta from '../components/detalle_oferta.vue'
-import RegistroAgente from '../components/registro_agente.vue'
-import Calendario from '../components/calendario.vue'
-import Postulaciones from '../components/postulaciones_agente.vue'
-import Reportes from '../components/reportes_agente.vue'
-import Certificaciones from '../components/certificaciones_agente.vue'
-import Evaluaciones from '../components/evaluaciones_agente.vue'
-import Pagos from '../components/pagos_agente.vue'
-import Soporte from '../components/soporte_agente.vue'
-import Ofertas from '../components/ofertas_agente.vue'
-import Inicio from '../components/inicio_agente.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import DetalleOferta from '../components/detalle_oferta.vue';
+import RegistroAgente from '../components/registro_agente.vue';
+import Calendario from '../components/calendario.vue';
+import Postulaciones from '../components/postulaciones_agente.vue';
+import Reportes from '../components/reportes_agente.vue';
+import Certificaciones from '../components/certificaciones_agente.vue';
+import Evaluaciones from '../components/evaluaciones_agente.vue';
+import Pagos from '../components/pagos_agente.vue';
+import Soporte from '../components/soporte_agente.vue';
+import Ofertas from '../components/ofertas_agente.vue';
+import Inicio from '../components/inicio_agente.vue';
+import LoginAgente from '../components/LoginAgente.vue';
+import Configuracion from '../components/ConfiguracionCuenta.vue';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/', // Redirige la ruta raíz a /registro
-    redirect: '/registro'
+    path: '/',
+    redirect: '/login_agente' // Redirige la ruta raíz a /login_agente
   },
   {
-    path: '/inicio',
-    name: 'Inicio',
-    component: Inicio
+    path: '/login_agente',
+    name: 'Login',
+    component: LoginAgente
   },
   {
     path: '/registro',
     name: 'RegistroAgente',
     component: RegistroAgente
+  },
+  {
+    path: '/inicio',
+    name: 'Inicio',
+    component: Inicio
   },
   {
     path: '/ofertas/:id',
@@ -76,19 +83,17 @@ const routes = [
     name: 'soporte',
     component: Soporte
   },
-]
+  {
+    path: '/configuracion',
+    name: 'ConfiguracionCuenta',
+    component: Configuracion
+  }
+];
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
-})
-
-router.beforeEach((to, from, next) => {
-  if (!localStorage.getItem('agenteRegistrado') && to.path !== '/registro') {
-    next('/registro');
-  } else {
-    next();
-  }
 });
-export default router
+
+export default router;

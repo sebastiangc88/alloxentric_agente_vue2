@@ -122,6 +122,9 @@
 </template>
 
 <script>
+
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -161,10 +164,63 @@ export default {
       this.menu = val;
     },
     ingresarDatosTributarios() {},
-    volverAtras() {},
-    finalizarRegistro() {
-      localStorage.setItem('agenteRegistrado', true);
-      this.$router.push('/inicio'); 
+    volverAtras() {
+      this.$router.push('/login'); // Asumiendo que vuelve a la pantalla de login
+    },
+    async finalizarRegistro() {
+      try {
+        const token = localStorage.getItem('token');
+        
+        // Formatea los datos de idiomas seleccionados con sus niveles
+        const idiomas = this.idiomasSeleccionados.map(idioma => ({
+          idioma,
+          nivel: this.nivelesIdioma[idioma] || 'Básico'
+        }));
+
+        console.log({
+          nombreCompleto: this.nombreCompleto,
+          idFiscal: this.idFiscal,
+          telefono: this.telefono,
+          whatsappVerificado: this.whatsappVerificado,
+          fechaNacimiento: this.fechaNacimiento,
+          genero: this.genero,
+          pais: this.selectedPais,
+          tiposAgenteSeleccionados: this.tiposAgenteSeleccionados,
+          experiencia: this.experiencia,
+          habilidades: this.habilidades,
+          idiomas,
+          otroIdioma: this.otroIdioma
+        });
+
+        // Enviar solicitud POST al backend
+        await axios.post('http://localhost:5001/api/agentes/registro', {
+          nombreCompleto: this.nombreCompleto,
+          idFiscal: this.idFiscal,
+          telefono: this.telefono,
+          whatsappVerificado: this.whatsappVerificado,
+          fechaNacimiento: this.fechaNacimiento,
+          genero: this.genero,
+          pais: this.selectedPais,
+          tiposAgenteSeleccionados: this.tiposAgenteSeleccionados,
+          experiencia: this.experiencia,
+          habilidades: this.habilidades,
+          idiomas,
+          otroIdioma: this.otroIdioma
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        alert('Registro completado con éxito');
+
+        localStorage.setItem('nombreCompleto', this.nombreCompleto); // Guarda el nombre del agente
+        localStorage.setItem('agenteRegistrado', true); // Marca el agente como registrado
+        this.$router.push('/inicio');
+      } catch (error) {
+        console.error('Error al registrar agente:', error);
+        alert('Hubo un problema al registrar los datos. Intenta nuevamente.');
+      }
     },
     
     // Método para alternar la selección de idiomas y nivel predeterminado
