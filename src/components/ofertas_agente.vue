@@ -6,7 +6,7 @@
           Ofertas Disponibles
         </h1>
         <v-row>
-          <v-col v-for="offer in offers" :key="offer.id" cols="12" sm="6" md="4" lg="3">
+          <v-col v-for="offer in offers" :key="offer._id" cols="12" sm="6" md="4" lg="3">
             <v-card class="mx-auto card-bordered" max-width="470">
               <!-- Cuadrado de color -->
               <div class="color-box mb-2"></div>
@@ -18,7 +18,7 @@
                 <p><strong>Descripción:</strong> {{ offer.jobDescription }}</p>
               </v-card-text>
               <v-card-actions>
-                <router-link :to="`/ofertas/${offer.id}`">
+                <router-link :to="`/ofertas/${offer._id}`">
                   <v-btn color="#008080" class="white--text">Ver Detalle</v-btn>
                 </router-link>
               </v-card-actions>
@@ -31,71 +31,31 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'OfertaAgenteVue',
   data() {
     return {
       drawer: false,
-      offers: [
-        {
-          id: 1,
-          title: "Agente de Servicio Freelance",
-          type: "Customer Service",
-          category: "Otro",
-          hourlyRate: 15.0,
-          jobDescription:
-            "Como Representante de Servicio al Cliente, serás la voz de nuestra empresa...",
-        },
-        {
-          id: 2,
-          title: "Agente de Servicio Freelance",
-          type: "Customer Service",
-          category: "Otro",
-          hourlyRate: 15.0,
-          jobDescription:
-            "Como Representante de Servicio al Cliente, serás la voz de nuestra empresa...",
-        },
-        {
-            id: 3,
-            title: "Agente de Servicio Freelance",
-            type: "Customer Service",
-            category: "Otro",
-            hourlyRate: 15.0,
-            jobDescription:
-              "Como Representante de Servicio al Cliente, serás la voz de nuestra empresa...",
-          },
-          {
-            id: 4,
-            title: "Agente de Servicio Freelance",
-            type: "Customer Service",
-            category: "Otro",
-            hourlyRate: 15.0,
-            jobDescription:
-              "Como Representante de Servicio al Cliente, serás la voz de nuestra empresa...",
-          },
-          {
-            id: 5,
-            title: "Agente de Finanzas",
-            type: "Customer Service",
-            category: "Otro",
-            hourlyRate: 15.0,
-            jobDescription:
-              "Como Representante de Servicio al Cliente, serás la voz de nuestra empresa...",
-          },
-          {
-            id: 6,
-            title: "Agente de Comercio",
-            type: "Customer Service",
-            category: "Otro",
-            hourlyRate: 15.0,
-            jobDescription:
-              "Como Representante de Servicio al Cliente, serás la voz de nuestra empresa...",
-          },
-        // ... más ofertas ...
-      ],
+      offers: [],
+      loading: true
     };
   },
+  created() {
+    this.fetchOffers();
+  },
   methods: {
+    async fetchOffers() {
+      try {
+        const response = await axios.get('http://localhost:5001/api/ofertas');
+        this.offers = response.data;
+      } catch (error) {
+        console.error('Error al obtener las ofertas:', error);
+      } finally {
+        this.loading = false;
+      }
+    },
     toggleDrawer() {
       this.drawer = !this.drawer;
     },

@@ -21,11 +21,19 @@ const faqRoutes = require('./routes/faqRoutes');
 const ticketRoutes = require('./routes/ticketRoutes');
 const userRoutes = require('./routes/userRoutes');
 const agenteRoutes = require('./routes/agenteRoutes');
+const ofertasRoutes = require('./routes/ofertasRoutes');
+
+
+
+
+
 
 // Usar rutas
 app.use('/api/soporte/faqs', faqRoutes);
 app.use('/api/soporte/tickets', ticketRoutes);
 app.use('/api/soporte', userRoutes);
 app.use('/api/agentes', agenteRoutes);
+app.use('/api/ofertas', ofertasRoutes);
+
 
 module.exports = app;
