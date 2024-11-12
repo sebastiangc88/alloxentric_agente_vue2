@@ -24,6 +24,9 @@ const userRoutes = require('./routes/userRoutes');
 const agenteRoutes = require('./routes/agenteRoutes');
 const ofertasRoutes = require('./routes/ofertasRoutes');
 const calendarioRoutes = require('./routes/CalendarioRoutes'); // Asegúrate de que el archivo esté en minúsculas si así lo has nombrado
+const pagosRoutes = require('./routes/pagosRoutes');
+const solicitudRoutes = require('./routes/solicitudRoutes');
+const reporteRoutes = require('./routes/reporteRoutes');
 
 // Usar rutas
 app.use('/api/soporte/faqs', faqRoutes);
@@ -32,5 +35,8 @@ app.use('/api/soporte', userRoutes);
 app.use('/api/agentes', agenteRoutes);
 app.use('/api/ofertas', ofertasRoutes);
 app.use('/api/calendario', calendarioRoutes);
+app.use('/api', pagosRoutes);
+app.use('/api', solicitudRoutes);
+app.use('/api', reporteRoutes);
 
 module.exports = app;

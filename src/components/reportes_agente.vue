@@ -21,7 +21,7 @@
                       </thead>
                       <tbody>
                         <tr v-for="(antecedente, index) in antecedentes" :key="index">
-                          <td>{{ antecedente.fecha }}</td>
+                          <td>{{ formatDate(antecedente.fecha) }}</td>
                           <td>{{ antecedente.descripcion }}</td>
                         </tr>
                       </tbody>
@@ -47,7 +47,7 @@
                       </thead>
                       <tbody>
                         <tr v-for="(pago, index) in pagos" :key="index">
-                          <td>{{ pago.fecha }}</td>
+                          <td>{{ formatDate(pago.fecha) }}</td>
                           <td>{{ pago.monto }}</td>
                           <td>{{ pago.empresa }}</td>
                           <td class="estados">
@@ -89,7 +89,7 @@
                       </thead>
                       <tbody>
                         <tr v-for="(actividad, index) in actividades" :key="index">
-                          <td>{{ actividad.fecha }}</td>
+                          <td>{{ formatDate(actividad.fecha) }}</td>
                           <td>{{ actividad.actividad }}</td>
                           <td>{{ actividad.puntos }}</td>
                         </tr>
@@ -109,7 +109,7 @@
                       <tbody>
                         <tr v-for="(recompensa, index) in recompensas" :key="index" style="margin-top: 10px;">
                           <td>{{ recompensa.nombre }}</td>
-                          <td>{{ recompensa.puntos }}</td>
+                          <td>{{ recompensa.puntosRequeridos }}</td>
                           <td>
                             <v-btn 
                               color="white" 
@@ -137,33 +137,59 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      antecedentes: [
-        { fecha: '2023-01-15', descripcion: 'Inicio de contrato' },
-        { fecha: '2023-06-30', descripcion: 'Renovación de licencia' },
-      ],
-      pagos: [
-        { fecha: '2023-07-01', monto: '$1500', empresa: 'Empresa A', estado: 'Pagado' },
-        { fecha: '2023-08-01', monto: '$1500', empresa: 'Empresa B', estado: 'Pendiente' },
-      ],
-      puntosAcumulados: 5000,
-      actividades: [
-        { fecha: '2023-08-15', actividad: 'Completar proyecto', puntos: '+1000' },
-        { fecha: '2023-08-10', actividad: 'Referir cliente', puntos: '+500' },
-      ],
-      recompensas: [
-        { nombre: 'Día libre', puntos: 5000 },
-        { nombre: 'Bono en efectivo', puntos: 10000 },
-      ],
+      antecedentes: [],
+      pagos: [],
+      puntosAcumulados: 0,
+      actividades: [],
+      recompensas: [],
     };
   },
   methods: {
-    canjearRecompensa(recompensa) {
-      // Lógica para canjear la recompensa
-      console.log('Canjear recompensa:', recompensa.nombre);
+    async fetchReportes() {
+      try {
+        const response = await axios.get('http://localhost:5001/api/reporte');
+        const data = response.data;
+        this.antecedentes = data.antecedentes || [];
+        this.pagos = data.pagos || [];
+        this.puntosAcumulados = data.bonificaciones.puntosAcumulados || 0;
+        this.actividades = data.bonificaciones.actividades || [];
+        this.recompensas = data.bonificaciones.recompensas || [];
+      } catch (error) {
+        console.error('Error al obtener los reportes:', error);
+      }
     },
+    formatDate(date) {
+      const d = new Date(date);
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${month}-${day}-${year}`;
+    },
+    async canjearRecompensa(recompensa) {
+      try {
+        const response = await axios.post('http://localhost:5001/api/reporte/recompensa', {
+          nombre: recompensa.nombre,
+          puntosRequeridos: recompensa.puntosRequeridos,
+        });
+        if (response.status === 200) {
+          alert(`Recompensa "${recompensa.nombre}" canjeada exitosamente.`);
+          this.puntosAcumulados = response.data.bonificaciones.puntosAcumulados;
+        } else {
+          alert('Error al canjear la recompensa');
+        }
+      } catch (error) {
+        console.error('Error al canjear recompensa:', error);
+        alert('Error al canjear la recompensa');
+      }
+    },
+  },
+  async created() {
+    await this.fetchReportes();
   },
 };
 </script>

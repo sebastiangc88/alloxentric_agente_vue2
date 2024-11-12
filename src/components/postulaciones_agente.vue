@@ -37,7 +37,7 @@
       <!-- Sección de lista de postulaciones -->
       <v-row>
         <v-col cols="12">
-          <v-data-table :headers="headers" :items="postulaciones" class="elevation-1">
+          <v-data-table :headers="headers" :items="formattedPostulaciones" class="elevation-1">
             <template v-slot:[`item.estado`]="{ item }">
               <v-chip :color="getColor(item.estado)" dark>
                 {{ item.estado }}
@@ -51,19 +51,15 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      aceptadas: 2,
-      rechazadas: 1,
-      enProceso: 2,
-      postulaciones: [
-        { posicion: 'Agente de Soporte', empresa: 'TechCorp', fecha: '2024-09-15', estado: 'Aceptada' },
-        { posicion: 'Agente de Ventas', empresa: 'SalesForce', fecha: '2024-09-10', estado: 'Rechazada' },
-        { posicion: 'Agente de Atención al Cliente', empresa: 'ServiceNow', fecha: '2024-09-20', estado: 'En Proceso' },
-        { posicion: 'Agente de Cobranzas', empresa: 'FinanceHub', fecha: '2024-09-18', estado: 'En Proceso' },
-        { posicion: 'Agente de Soporte Técnico', empresa: 'ITSolutions', fecha: '2024-09-12', estado: 'Aceptada' },
-      ],
+      aceptadas: 0,
+      rechazadas: 0,
+      enProceso: 0,
+      postulaciones: [],
       headers: [
         { text: 'Posición', value: 'posicion' },
         { text: 'Empresa', value: 'empresa' },
@@ -73,12 +69,57 @@ export default {
     };
   },
 
+  computed: {
+    formattedPostulaciones() {
+      return this.postulaciones.map(postulacion => ({
+        ...postulacion,
+        fecha: this.formatDate(postulacion.fecha),
+      }));
+    },
+  },
+
   methods: {
+    async fetchPostulaciones() {
+      try {
+        // Obtener todas las postulaciones desde el backend
+        const response = await axios.get('http://localhost:5001/api/solicitudes');
+        this.postulaciones = response.data;
+      } catch (error) {
+        console.error('Error al obtener las postulaciones:', error);
+      }
+    },
+
+    async fetchTotales() {
+      try {
+        // Obtener los totales de cada estado desde el backend
+        const response = await axios.get('http://localhost:5001/api/solicitudes/totales');
+        this.aceptadas = response.data.aceptadas;
+        this.rechazadas = response.data.rechazadas;
+        this.enProceso = response.data.enProceso;
+      } catch (error) {
+        console.error('Error al obtener los totales:', error);
+      }
+    },
+
+    formatDate(date) {
+      const d = new Date(date);
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${month}-${day}-${year}`;
+    },
+
     getColor(estado) {
       if (estado === 'Aceptada') return 'green';
       else if (estado === 'Rechazada') return 'red';
       return '#EDDC68';
     },
+  },
+
+  async created() {
+    // Llamar a las funciones para cargar los datos al montar el componente
+    await this.fetchPostulaciones();
+    await this.fetchTotales();
   },
 };
 </script>
