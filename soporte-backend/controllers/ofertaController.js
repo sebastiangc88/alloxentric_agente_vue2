@@ -69,3 +69,57 @@ exports.crearPostulacion = async (req, res) => {
     res.status(500).json({ message: 'Error al crear la postulaci贸n' });
   }
 };
+
+/// Confirmar una postulación a una oferta
+exports.confirmarPostulacion = async (req, res) => {
+  try {
+    const oferta = await Oferta.findById(req.params.oferta_id);
+    if (!oferta) {
+      return res.status(404).json({ message: 'Oferta no encontrada' });
+    }
+
+    const postulacion = oferta.postulaciones.id(req.params.postulacion_id); 
+    if (!postulacion) {
+      return res.status(404).json({ message: 'Postulación no encontrada' });
+    }
+
+    if (postulacion.estado === 'aceptada') {
+      return res.status(400).json({ message: 'La postulación ya está confirmada' });
+    }
+
+    postulacion.estado = 'aceptada';
+    await oferta.save();
+
+    res.status(200).json({ message: 'Postulación confirmada' });
+  } catch (error) {
+    console.error('Error al confirmar la postulación:', error);
+    res.status(500).json({ message: 'Error al confirmar la postulación' });
+  }
+};
+
+// Rechazar una postulación a una oferta
+exports.rechazarPostulacion = async (req, res) => {
+  try {
+    const oferta = await Oferta.findById(req.params.oferta_id);
+    if (!oferta) {
+      return res.status(404).json({ message: 'Oferta no encontrada' });
+    }
+
+    const postulacion = oferta.postulaciones.id(req.params.postulacion_id);
+    if (!postulacion) {
+      return res.status(404).json({ message: 'Postulación no encontrada' });
+    }
+
+    if (postulacion.estado === 'rechazada') {
+      return res.status(400).json({ message: 'La postulación ya está rechazada' });
+    }
+
+    postulacion.estado = 'rechazada';
+    await oferta.save();
+
+    res.status(200).json({ message: 'Postulación rechazada' });
+  } catch (error) {
+    console.error('Error al rechazar la postulación:', error);
+    res.status(500).json({ message: 'Error al rechazar la postulación' });
+  }
+};

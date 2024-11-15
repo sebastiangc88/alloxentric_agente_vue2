@@ -18,4 +18,10 @@ router.get('/:id/calendario', ofertaController.getCalendarioOferta);
 // Crear una nueva postulaci贸n a una oferta (requiere autenticaci贸n)
 router.post('/:oferta_id/post', authMiddleware, ofertaController.crearPostulacion);
 
+// Confirmar una postulación a una oferta (requiere autenticación)
+router.put('/:oferta_id/postulaciones/:postulacion_id/confirmar', authMiddleware, ofertaController.confirmarPostulacion);
+
+// Rechazar una postulación a una oferta (requiere autenticación)
+router.put('/:oferta_id/postulaciones/:postulacion_id/rechazar', authMiddleware, ofertaController.rechazarPostulacion);
+
 module.exports = router;
