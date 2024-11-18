@@ -26,9 +26,11 @@ const ofertasRoutes = require('./routes/ofertasRoutes');
 const calendarioRoutes = require('./routes/CalendarioRoutes'); // Asegúrate de que el archivo esté en minúsculas si así lo has nombrado
 const pagosRoutes = require('./routes/pagosRoutes');
 const solicitudRoutes = require('./routes/solicitudRoutes');
-const reporteRoutes = require('./routes/reporteRoutes');
 const evaluacionRoutes = require('./routes/EvaluacionRoutes');
 const certificacionesRoutes = require('./routes/certificacionesRoutes');
+const reporteRoutes = require('./routes/reporteRoutes'); // Importar las rutas del reporte
+
+
 
 
 // Usar rutas
@@ -40,7 +42,7 @@ app.use('/api/ofertas', ofertasRoutes);
 app.use('/api/calendario', calendarioRoutes);
 app.use('/api', pagosRoutes);
 app.use('/api', solicitudRoutes);
-app.use('/api', reporteRoutes);
+app.use('/api/reportes', reporteRoutes); 
 app.use('/api/evaluaciones', evaluacionRoutes);
 app.use('/api/certificaciones', certificacionesRoutes);
 

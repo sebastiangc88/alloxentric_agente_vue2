@@ -1,11 +1,13 @@
 <template>
   <v-container class="bloque_principal">
     <v-row>
+      <!-- Título Principal -->
       <v-col cols="12">
         <v-card class="mb-4">
           <v-card-title class="headline">Reportes de Agente</v-card-title>
           <v-card-text>
             <v-row>
+              <!-- Antecedentes del Agente -->
               <v-col cols="12" md="6">
                 <v-card>
                   <v-card-title class="subtitle-1 font-weight-bold">
@@ -20,7 +22,11 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="(antecedente, index) in antecedentes" :key="index">
+                        <!-- Iterar sobre todos los antecedentes de todos los reportes -->
+                        <tr
+                          v-for="(antecedente, reporteIndex) in getAllAntecedentes()"
+                          :key="reporteIndex"
+                        >
                           <td>{{ formatDate(antecedente.fecha) }}</td>
                           <td>{{ antecedente.descripcion }}</td>
                         </tr>
@@ -30,6 +36,7 @@
                 </v-card>
               </v-col>
 
+              <!-- Pagos al Agente -->
               <v-col cols="12" md="6">
                 <v-card>
                   <v-card-title class="subtitle-1 font-weight-bold">
@@ -46,12 +53,19 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="(pago, index) in pagos" :key="index">
+                        <!-- Iterar sobre todos los pagos de todos los reportes -->
+                        <tr
+                          v-for="(pago, pagoIndex) in getAllPagos()"
+                          :key="pagoIndex"
+                        >
                           <td>{{ formatDate(pago.fecha) }}</td>
                           <td>{{ pago.monto }}</td>
                           <td>{{ pago.empresa }}</td>
-                          <td class="estados">
-                            <v-chip :color="pago.estado === 'Pagado' ? '#008080': '#F57170'" class="white--text text-uppercase mb-1" >
+                          <td>
+                            <v-chip
+                              :color="pago.estado === 'Pagado' ? '#008080' : '#F57170'"
+                              class="white--text text-uppercase mb-1"
+                            >
                               {{ pago.estado }}
                             </v-chip>
                           </td>
@@ -65,19 +79,24 @@
           </v-card-text>
         </v-card>
 
+        <!-- Sistema de Bonificaciones y Canje de Puntos -->
         <v-card>
-          <v-card-title class="headline">Sistema de Bonificaciones y Canje de Puntos</v-card-title>
+          <v-card-title class="headline">
+            Sistema de Bonificaciones y Canje de Puntos
+          </v-card-title>
           <v-card-text>
             <v-row>
+              <!-- Puntos Acumulados -->
               <v-col cols="12" md="4">
                 <div class="cuadro_puntos">
                   <div class="font-weight-bold mb-2">Puntos Acumulados</div>
-                  <div class="display-1">{{ puntosAcumulados }}</div>
+                  <div class="display-1">{{ getTotalPuntosAcumulados() }}</div>
                 </div>
               </v-col>
 
               <v-col cols="12" md="8">
                 <v-row>
+                  <!-- Actividades -->
                   <v-col cols="12" md="6">
                     <v-simple-table dense>
                       <thead>
@@ -88,7 +107,11 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="(actividad, index) in actividades" :key="index">
+                        <!-- Iterar sobre todas las actividades de todos los reportes -->
+                        <tr
+                          v-for="(actividad, actividadIndex) in getAllActividades()"
+                          :key="actividadIndex"
+                        >
                           <td>{{ formatDate(actividad.fecha) }}</td>
                           <td>{{ actividad.actividad }}</td>
                           <td>{{ actividad.puntos }}</td>
@@ -97,6 +120,7 @@
                     </v-simple-table>
                   </v-col>
 
+                  <!-- Recompensas -->
                   <v-col cols="12" md="6">
                     <v-simple-table dense>
                       <thead>
@@ -107,16 +131,19 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="(recompensa, index) in recompensas" :key="index" style="margin-top: 10px;">
+                        <!-- Iterar sobre todas las recompensas de todos los reportes -->
+                        <tr
+                          v-for="(recompensa, recompensaIndex) in getAllRecompensas()"
+                          :key="recompensaIndex"
+                        >
                           <td>{{ recompensa.nombre }}</td>
                           <td>{{ recompensa.puntosRequeridos }}</td>
                           <td>
-                            <v-btn 
-                              color="white" 
-                              text 
-                              size="small"  
-                              style="background-color: #008080;"
-                              class="mb-1"
+                            <v-btn
+                              :disabled="getTotalPuntosAcumulados() < recompensa.puntosRequeridos"
+                              :color="getTotalPuntosAcumulados() >= recompensa.puntosRequeridos ? 'teal' : 'grey'"
+                              text
+                              size="small"
                               @click="canjearRecompensa(recompensa)"
                             >
                               Canjear
@@ -142,49 +169,67 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      antecedentes: [],
-      pagos: [],
-      puntosAcumulados: 0,
-      actividades: [],
-      recompensas: [],
+      reportes: [], // Arreglo para almacenar múltiples reportes
     };
   },
   methods: {
     async fetchReportes() {
       try {
-        const response = await axios.get('http://localhost:5001/api/reporte');
-        const data = response.data;
-        this.antecedentes = data.antecedentes || [];
-        this.pagos = data.pagos || [];
-        this.puntosAcumulados = data.bonificaciones.puntosAcumulados || 0;
-        this.actividades = data.bonificaciones.actividades || [];
-        this.recompensas = data.bonificaciones.recompensas || [];
+        const response = await axios.get('http://localhost:5001/api/reportes/reporte');
+        this.reportes = response.data; // Asignar todos los reportes al arreglo
       } catch (error) {
         console.error('Error al obtener los reportes:', error);
       }
     },
     formatDate(date) {
       const d = new Date(date);
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      const year = d.getFullYear();
-      return `${month}-${day}-${year}`;
+      return d.toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+      });
+    },
+    getAllAntecedentes() {
+      return this.reportes.flatMap((reporte) => reporte.antecedentes);
+    },
+    getAllPagos() {
+      return this.reportes.flatMap((reporte) => reporte.pagos);
+    },
+    getAllActividades() {
+      return this.reportes.flatMap(
+        (reporte) => reporte.bonificaciones.actividades
+      );
+    },
+    getAllRecompensas() {
+      return this.reportes.flatMap(
+        (reporte) => reporte.bonificaciones.recompensas
+      );
+    },
+    getTotalPuntosAcumulados() {
+      // Calcular la suma total de puntos directamente desde las actividades
+      return this.reportes.reduce((total, reporte) => {
+        return (
+          total +
+          reporte.bonificaciones.actividades.reduce(
+            (sum, actividad) => sum + actividad.puntos,
+            0
+          )
+        );
+      }, 0);
     },
     async canjearRecompensa(recompensa) {
       try {
-        const response = await axios.post('http://localhost:5001/api/reporte/recompensa', {
-          nombre: recompensa.nombre,
-          puntosRequeridos: recompensa.puntosRequeridos,
-        });
+        const response = await axios.post(
+          `http://localhost:5001/api/reporte/recompensa`,
+          recompensa
+        );
         if (response.status === 200) {
           alert(`Recompensa "${recompensa.nombre}" canjeada exitosamente.`);
-          this.puntosAcumulados = response.data.bonificaciones.puntosAcumulados;
-        } else {
-          alert('Error al canjear la recompensa');
+          await this.fetchReportes(); // Refresca los datos
         }
       } catch (error) {
         console.error('Error al canjear recompensa:', error);
-        alert('Error al canjear la recompensa');
+        alert('Error al intentar canjear la recompensa.');
       }
     },
   },
