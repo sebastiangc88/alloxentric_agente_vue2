@@ -27,6 +27,9 @@ const calendarioRoutes = require('./routes/CalendarioRoutes'); // Asegúrate de 
 const pagosRoutes = require('./routes/pagosRoutes');
 const solicitudRoutes = require('./routes/solicitudRoutes');
 const reporteRoutes = require('./routes/reporteRoutes');
+const evaluacionRoutes = require('./routes/EvaluacionRoutes');
+const certificacionesRoutes = require('./routes/certificacionesRoutes');
+
 
 // Usar rutas
 app.use('/api/soporte/faqs', faqRoutes);
@@ -38,5 +41,7 @@ app.use('/api/calendario', calendarioRoutes);
 app.use('/api', pagosRoutes);
 app.use('/api', solicitudRoutes);
 app.use('/api', reporteRoutes);
+app.use('/api/evaluaciones', evaluacionRoutes);
+app.use('/api/certificaciones', certificacionesRoutes);
 
 module.exports = app;

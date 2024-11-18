@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const pagoController = require('../controllers/pagoController');
+const { route } = require('./faqRoutes');
 
 // Ruta para obtener todos los pagos
 router.get('/pagos', pagoController.obtenerPagos);
@@ -16,3 +17,4 @@ router.put('/pagos/:id', pagoController.actualizarPago);
 router.delete('/pagos/:id', pagoController.eliminarPago);
 
 module.exports = router;
+

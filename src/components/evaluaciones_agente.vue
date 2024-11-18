@@ -60,23 +60,70 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      generalRating: 4.2,
-      totalEvaluaciones: 150,
+      generalRating: 0,
+      totalEvaluaciones: 0,
       scores: [
-        { label: 'Atención al Cliente', value: 4.5 },
-        { label: 'Resolución de Problemas', value: 4.2 },
-        { label: 'Eficiencia', value: 4.0 },
-        { label: 'Conocimiento del Producto', value: 4.3 },
+        { label: 'Atención al Cliente', value: 0 },
+        { label: 'Resolución de Problemas', value: 0 },
+        { label: 'Eficiencia', value: 0 },
+        { label: 'Conocimiento del Producto', value: 0 },
       ],
-      recentComments: [
-        { text: 'Excelente atención, muy profesional y eficiente.', date: 'Hace 1 día', rating: 4.5 },
-        { text: 'Resolví mi problema rápidamente. Muy satisfecho.', date: 'Hace 2 días', rating: 4.0 },
-        { text: 'Buen servicio, pero tardó un poco en entender mi problema.', date: 'Hace 3 días', rating: 3.5 },
-      ],
+      recentComments: [],
     };
+  },
+  methods: {
+    async fetchEvaluaciones() {
+      try {
+        const response = await axios.get('http://localhost:5001/api/evaluaciones');
+        
+        const evaluaciones = response.data;
+        
+        // Calcular la calificación general
+        let totalRating = 0;
+        evaluaciones.forEach((evaluacion) => {
+          totalRating += evaluacion.estrellasComentario;
+        });
+        this.generalRating = (totalRating / evaluaciones.length).toFixed(1);
+        this.totalEvaluaciones = evaluaciones.length;
+
+        // Actualizar desglose de evaluaciones
+        const averageScores = {
+          atencionCliente: 0,
+          resolucionProblemas: 0,
+          eficiencia: 0,
+          conocimientoProducto: 0,
+        };
+        
+        evaluaciones.forEach((evaluacion) => {
+          averageScores.atencionCliente += evaluacion.atencionCliente;
+          averageScores.resolucionProblemas += evaluacion.resolucionProblemas;
+          averageScores.eficiencia += evaluacion.eficiencia;
+          averageScores.conocimientoProducto += evaluacion.conocimientoProducto;
+        });
+
+        this.scores[0].value = (averageScores.atencionCliente / evaluaciones.length).toFixed(1);
+        this.scores[1].value = (averageScores.resolucionProblemas / evaluaciones.length).toFixed(1);
+        this.scores[2].value = (averageScores.eficiencia / evaluaciones.length).toFixed(1);
+        this.scores[3].value = (averageScores.conocimientoProducto / evaluaciones.length).toFixed(1);
+
+        // Actualizar comentarios recientes
+        this.recentComments = evaluaciones.slice(-3).map((evaluacion) => ({
+          text: evaluacion.comentario,
+          date: new Date(evaluacion.fecha).toLocaleDateString(),
+          rating: evaluacion.estrellasComentario,
+        }));
+      } catch (error) {
+        console.error('Error al obtener evaluaciones:', error);
+      }
+    },
+  },
+  created() {
+    this.fetchEvaluaciones();
   },
 };
 </script>
@@ -84,7 +131,6 @@ export default {
 <style scoped>
 .caja_calificaciones {
   margin-top: 50px;
-  
 }
 
 .contenido_calificaciones {
