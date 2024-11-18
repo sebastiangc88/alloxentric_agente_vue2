@@ -120,18 +120,7 @@ export default {
     return {
       fecha: moment().tz('America/Santiago').toDate(),
       selectedDate: moment().tz('America/Santiago').toDate(),
-      activities: [
-        {
-          id: 1,
-          title: 'Gestion proyecto',
-          date: moment.tz(`${currentYear}-11-08 11:00`, 'YYYY-MM-DD HH:mm', 'America/Santiago'),
-        },
-        {
-          id: 2,
-          title: 'Atención telefónica',
-          date: moment.tz(`${currentYear}-11-10 08:00`, 'YYYY-MM-DD HH:mm', 'America/Santiago'),
-        },
-      ],
+      activities: [],
       holidays: holidays.map((holiday) => ({
         date: moment.tz(holiday.date, 'America/Santiago').toDate(),
         name: holiday.name,
@@ -151,16 +140,16 @@ export default {
       const startOfMonth = moment(this.fecha).tz('America/Santiago').startOf('month');
       const endOfMonth = moment(this.fecha).tz('America/Santiago').endOf('month');
       const daysInMonth = endOfMonth.date();
+      const firstDay = startOfMonth.day();
 
-      const startDayOfWeek = startOfMonth.day();
       const daysArray = [];
 
-      for (let i = 0; i < startDayOfWeek; i++) {
+      for (let i = 0; i < firstDay; i++) {
         daysArray.push(null);
       }
 
       for (let i = 1; i <= daysInMonth; i++) {
-        daysArray.push(moment.tz(this.fecha, 'America/Santiago').date(i).toDate());
+        daysArray.push(startOfMonth.clone().add(i - 1, 'days').toDate());
       }
 
       return daysArray;
@@ -169,6 +158,7 @@ export default {
   mounted() {
     this.actualizarFechaActual();
     this.findNextEvent();
+    this.fetchEvents();
   },
   beforeDestroy() {
     if (this.interval) {
@@ -185,13 +175,13 @@ export default {
     },
     findNextEvent() {
       const now = moment().tz('America/Santiago');
-      const upcomingEvents = this.activities.filter((activity) => {
-        const activityTime = activity.date;
+      let upcomingEvents = this.activities.filter((activity) => {
+        const activityTime = moment(activity.fecha_inicio).tz('America/Santiago');
         return activityTime.isAfter(now);
       });
 
       if (upcomingEvents.length > 0) {
-        upcomingEvents.sort((a, b) => a.date.diff(b.date));
+        upcomingEvents.sort((a, b) => moment(a.fecha_inicio).tz('America/Santiago').diff(moment(b.fecha_inicio).tz('America/Santiago')));
         this.nearestEvent = upcomingEvents[0];
         this.actualizarCuentaRegresiva();
       } else {
@@ -206,7 +196,7 @@ export default {
         }
         this.interval = setInterval(() => {
           const now = moment().tz('America/Santiago');
-          const eventTime = this.nearestEvent.date;
+          const eventTime = moment(this.nearestEvent.fecha_inicio).tz('America/Santiago');
           const duration = moment.duration(eventTime.diff(now));
 
           if (duration.asMilliseconds() <= 0) {
@@ -224,9 +214,11 @@ export default {
     },
     mesAnterior() {
       this.fecha = moment(this.fecha).tz('America/Santiago').subtract(1, 'months').startOf('month').toDate();
+      this.fetchEvents(); // Actualizar eventos al cambiar de mes
     },
     mesSiguiente() {
       this.fecha = moment(this.fecha).tz('America/Santiago').add(1, 'months').startOf('month').toDate();
+      this.fetchEvents(); // Actualizar eventos al cambiar de mes
     },
     esFeriado(dia) {
       return this.holidays.some((holiday) =>
@@ -240,9 +232,37 @@ export default {
       return holiday ? holiday.name : '';
     },
     getDayActivities(dia) {
-      return this.activities.filter((activity) =>
-        activity.date.isSame(moment(dia).tz('America/Santiago'), 'day')
+      const actividadesDelDia = this.activities.filter((activity) =>
+        moment(activity.fecha_inicio).tz('America/Santiago').isSame(moment(dia).tz('America/Santiago'), 'day')
       );
+
+      // Ordena las actividades por hora de inicio
+      actividadesDelDia.sort((a, b) => moment(a.fecha_inicio).tz('America/Santiago').diff(moment(b.fecha_inicio).tz('America/Santiago')));
+
+      return actividadesDelDia;
+    },
+    async fetchEvents() {
+      try {
+        const response = await fetch(`/api/calendario/calendario`);
+        if (!response.ok) {
+          throw new Error('Error al obtener eventos del calendario');
+        }
+        this.activities = await response.json();
+        this.findNextEvent();
+      } catch (error) {
+        console.error(error);
+        // Manejar el error
+      }
+    },
+    obtenerHoraInicio(activity) {
+      if (activity.tipo === 'oferta') {
+        const horasSeleccionadas = activity.horas_seleccionadas.find(horario =>
+          moment(activity.fecha_inicio).tz('America/Santiago').isSame(moment(this.fecha).day(horario.dia), 'day')
+        );
+        return horasSeleccionadas ? horasSeleccionadas.horas[0] : '--:--';
+      } else {
+        return moment(activity.fecha_inicio).tz('America/Santiago').format('HH:mm');
+      }
     },
   },
 };
