@@ -1,80 +1,103 @@
-// controllers/reporteControllers.js
 const Reporte = require('../models/Reporte');
+const Pago = require('../models/Pagos');
 
-// Obtener el reporte del agente
-const obtenerReporte = async (req, res) => {
+// Obtener todos los reportes
+const obtenerReportes = async (req, res) => {
   try {
-    const reporte = await Reporte.findOne();
-    res.status(200).json(reporte);
+    const reportes = await Reporte.find();
+    res.status(200).json(reportes);
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener el reporte', error });
+    res.status(500).json({ message: 'Error al obtener los reportes', error });
   }
 };
 
-// Crear o actualizar el reporte del agente
-const crearOActualizarReporte = async (req, res) => {
+// Crear un reporte
+const crearReporte = async (req, res) => {
+  try {
+    const { antecedentes, pagos, bonificaciones } = req.body;
+
+    // Obtener información de pagos desde la colección "Pagos"
+    const pagosInfo = await Pago.find();
+
+    // Asociar información de monto y empresa
+    const pagosConDetalles = pagos.map(pago => {
+      const detalle = pagosInfo.find(p => p.nombreEmpresa === pago.empresa);
+      return detalle
+        ? { ...pago, monto: detalle.pagoMensual }
+        : { ...pago, monto: 0 }; // Si no encuentra la empresa, monto por defecto 0
+    });
+
+    const nuevoReporte = new Reporte({
+      antecedentes,
+      pagos: pagosConDetalles,
+      bonificaciones,
+    });
+
+    await nuevoReporte.save();
+    res.status(201).json(nuevoReporte);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear el reporte', error });
+  }
+};
+
+// Actualizar un reporte
+const actualizarReporte = async (req, res) => {
+  const { id } = req.params;
   const { antecedentes, pagos, bonificaciones } = req.body;
+
   try {
-    let reporte = await Reporte.findOne();
+    const reporteActualizado = await Reporte.findByIdAndUpdate(
+      id,
+      { antecedentes, pagos, bonificaciones },
+      { new: true }
+    );
 
-    if (reporte) {
-      // Actualizar el reporte existente
-      reporte.antecedentes = antecedentes || reporte.antecedentes;
-      reporte.pagos = pagos || reporte.pagos;
-      reporte.bonificaciones = bonificaciones || reporte.bonificaciones;
-    } else {
-      // Crear un nuevo reporte
-      reporte = new Reporte({ antecedentes, pagos, bonificaciones });
-    }
-
-    await reporte.save();
-    res.status(201).json(reporte);
+    res.status(200).json(reporteActualizado);
   } catch (error) {
-    res.status(500).json({ message: 'Error al crear o actualizar el reporte', error });
+    res.status(500).json({ message: 'Error al actualizar el reporte', error });
   }
 };
 
-// Agregar una actividad de bonificación
-const agregarActividad = async (req, res) => {
-  const { fecha, actividad, puntos } = req.body;
-  try {
-    const reporte = await Reporte.findOne();
-    if (!reporte) return res.status(404).json({ message: 'Reporte no encontrado' });
+// Eliminar un reporte
+const eliminarReporte = async (req, res) => {
+  const { id } = req.params;
 
-    reporte.bonificaciones.actividades.push({ fecha, actividad, puntos });
-    reporte.bonificaciones.puntosAcumulados += puntos;
+  try {
+    await Reporte.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Reporte eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al eliminar el reporte', error });
+  }
+};
+
+// Actualizar puntos acumulados
+const actualizarPuntosAcumulados = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const reporte = await Reporte.findById(id);
+    if (!reporte) {
+      return res.status(404).json({ message: 'Reporte no encontrado' });
+    }
+
+    const puntosAcumulados = reporte.bonificaciones.actividades.reduce(
+      (sum, actividad) => sum + actividad.puntos,
+      0
+    );
+
+    reporte.bonificaciones.puntosAcumulados = puntosAcumulados;
     await reporte.save();
 
     res.status(200).json(reporte);
   } catch (error) {
-    res.status(500).json({ message: 'Error al agregar actividad', error });
-  }
-};
-
-// Canjear una recompensa
-const canjearRecompensa = async (req, res) => {
-  const { nombre, puntosRequeridos } = req.body;
-  try {
-    const reporte = await Reporte.findOne();
-    if (!reporte) return res.status(404).json({ message: 'Reporte no encontrado' });
-
-    if (reporte.bonificaciones.puntosAcumulados < puntosRequeridos) {
-      return res.status(400).json({ message: 'Puntos insuficientes para canjear esta recompensa' });
-    }
-
-    reporte.bonificaciones.puntosAcumulados -= puntosRequeridos;
-    reporte.bonificaciones.recompensas.push({ nombre, puntosRequeridos });
-    await reporte.save();
-
-    res.status(200).json(reporte);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al canjear recompensa', error });
+    res.status(500).json({ message: 'Error al actualizar puntos acumulados', error });
   }
 };
 
 module.exports = {
-  obtenerReporte,
-  crearOActualizarReporte,
-  agregarActividad,
-  canjearRecompensa,
+  obtenerReportes,
+  crearReporte,
+  actualizarReporte,
+  eliminarReporte,
+  actualizarPuntosAcumulados,
 };

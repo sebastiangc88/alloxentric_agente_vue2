@@ -1,22 +1,25 @@
-<template> 
+<template>
   <v-container>
+    <!-- Título de bienvenida -->
     <v-row class="mb-6">
       <v-col cols="12">
-        <h1 class="text-h4 font-weight-bold text-primary mt-6">Bienvenido, {{ nombreCompleto }}
+        <h1 class="text-h4 font-weight-bold text-primary mt-6">
+          Bienvenido, {{ nombreCompleto }}
           <span v-if="nombreCompleto === 'Usuario'">
-            (<a  @click.prevent="redirigirRegistro">Regístre sus datos aquí</a>)
+            (<a @click.prevent="redirigirRegistro">Regístrese sus datos aquí</a>)
           </span>
         </h1>
       </v-col>
     </v-row>
 
+    <!-- Sección de estadísticas -->
     <v-row class="mb-4">
       <v-col cols="12" md="4">
         <v-card class="pa-4 bordered-card" style="border-color: #007f7f">
           <h2 class="text-xl font-weight-bold text-primary">Postulaciones Activas</h2>
           <div>
-            <p class="text-h5 font-weight-bold">4</p>
-            <p class="text-caption">(+2 desde la última semana)</p>
+            <p class="text-h5 font-weight-bold">{{ enProceso }}</p>
+            <p class="text-caption">(+{{ nuevasPostulaciones }} desde la última semana)</p>
           </div>
         </v-card>
       </v-col>
@@ -24,8 +27,10 @@
         <v-card class="pa-4 bordered-card" style="border-color: #007f7f">
           <h2 class="text-xl font-weight-bold text-primary">Ganancias del Mes</h2>
           <div>
-            <p class="text-h5 font-weight-bold">$1,500</p>
-            <p class="text-caption">(+5% respecto al mes anterior)</p>
+            <p class="text-h5 font-weight-bold">${{ gananciasMes }}</p>
+            <p class="text-caption">
+              {{ mesAnterior === 0 ? '(+100% respecto al mes anterior)' : `(+${calcularPorcentajeGanancia()}% respecto al mes anterior)` }}
+            </p>
           </div>
         </v-card>
       </v-col>
@@ -33,20 +38,20 @@
         <v-card class="pa-4 bordered-card" style="border-color: #007f7f">
           <h2 class="text-xl font-weight-bold text-primary">Puntos Acumulados</h2>
           <div>
-            <p class="text-h5 font-weight-bold">5,000</p>
+            <p class="text-h5 font-weight-bold">{{ puntosAcumulados }}</p>
             <v-progress-linear
-            style="border-radius:15px"
-              color="#007f7f" 
+              style="border-radius:15px"
+              color="#007f7f"
               height="20"
-              :value="60" 
-            >
-            </v-progress-linear>
-            <p class="text-caption mt-2">(40% para el siguiente nivel)</p>
+              :value="puntosAcumuladosPorcentaje"
+            ></v-progress-linear>
+            <p class="text-caption mt-2">({{ siguienteNivel - puntosAcumulados }} puntos para el siguiente nivel)</p>
           </div>
         </v-card>
       </v-col>
     </v-row>
 
+    <!-- Próximas entrevistas -->
     <v-row class="mb-4">
       <v-col cols="12" md="6">
         <v-card class="pa-4 bordered-card" style="border-color: #007f7f">
@@ -59,21 +64,19 @@
                   <th class="text-left">Empresa</th>
                   <th class="text-left">Posición</th>
                   <th class="text-left">Fecha</th>
-                  <th class="text-left">Hora</th>
+                  <th class="text-left">Estado</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>TechCorp</td>
-                  <td>Agente de Soporte</td>
-                  <td>2023-10-15</td>
-                  <td>10:00 AM</td>
-                </tr>
-                <tr>
-                  <td>ServiceNow</td>
-                  <td>Agente de Atención al Cliente</td>
-                  <td>2023-10-18</td>
-                  <td>2:00 PM</td>
+                <tr v-for="postulacion in formattedPostulaciones" :key="postulacion._id">
+                  <td>{{ postulacion.empresa }}</td>
+                  <td>{{ postulacion.posicion }}</td>
+                  <td>{{ postulacion.fecha }}</td>
+                  <td>
+                    <v-chip :color="getColor(postulacion.estado)" dark>
+                      {{ postulacion.estado }}
+                    </v-chip>
+                  </td>
                 </tr>
               </tbody>
             </v-simple-table>
@@ -83,6 +86,8 @@
           </v-card-actions>
         </v-card>
       </v-col>
+
+      <!-- Resumen de postulaciones -->
       <v-col cols="12" md="6">
         <v-card class="pa-4 bordered-card" style="border-color: #007f7f">
           <h2 class="text-xl font-weight-bold text-primary">Resumen de Postulaciones</h2>
@@ -90,32 +95,32 @@
           <div>
             <p>Aceptadas</p>
             <v-progress-linear
-            style="border-radius:15px"
-              color="#007f7f"
+              style="border-radius:15px"
+              color="#008080"
               height="12"
-              :value="40" 
+              :value="aceptadasPorcentaje"
             ></v-progress-linear>
-            <span>2</span>
+            <span>{{ aceptadas }}</span>
           </div>
           <div class="mt-2">
             <p>En Proceso</p>
             <v-progress-linear
-            style="border-radius:15px"
-              color="#007f7f"
+              style="border-radius:15px"
+              color="#008080"
               height="12"
-              :value="60" 
+              :value="enProcesoPorcentaje"
             ></v-progress-linear>
-            <span>3</span>
+            <span>{{ enProceso }}</span>
           </div>
           <div class="mt-2">
             <p>Rechazadas</p>
             <v-progress-linear
-            style="border-radius:15px"
-              color="#007f7f"
+              style="border-radius:15px"
+              color="#008080"
               height="12"
-              :value="20" 
+              :value="rechazadasPorcentaje"
             ></v-progress-linear>
-            <span>1</span>
+            <span>{{ rechazadas }}</span>
           </div>
           <v-btn color="#007f7f" block class="white--text mt-4" @click="goToApplications">Ver Todas las Postulaciones</v-btn>
         </v-card>
@@ -125,19 +130,89 @@
 </template>
 
 <script>
-export default {
+import axios from 'axios';
 
+export default {
   data() {
     return {
-      nombreCompleto: ''
+      nombreCompleto: '',
+      postulaciones: [],
+      aceptadas: 0,
+      rechazadas: 0,
+      enProceso: 0,
+      nuevasPostulaciones: 0,
+      puntosAcumulados: 0,
+      gananciasMes: 0,
+      siguienteNivel: 10000,
+      mesAnterior: 0,
     };
   },
-  mounted() {
-    // Recupera el nombre completo de localStorage al montar el componente
-    this.nombreCompleto = localStorage.getItem('nombreCompleto') || 'Usuario';
+
+  computed: {
+    formattedPostulaciones() {
+      return this.postulaciones.map(post => ({
+        ...post,
+        fecha: this.formatDate(post.fecha),
+      }));
+    },
+    aceptadasPorcentaje() {
+      return (this.aceptadas / this.postulaciones.length) * 100 || 0;
+    },
+    enProcesoPorcentaje() {
+      return (this.enProceso / this.postulaciones.length) * 100 || 0;
+    },
+    rechazadasPorcentaje() {
+      return (this.rechazadas / this.postulaciones.length) * 100 || 0;
+    },
+    puntosAcumuladosPorcentaje() {
+      return Math.min((this.puntosAcumulados / 5000) * 100, 100); // Ejemplo: 5000 puntos para el siguiente nivel
+    },
   },
 
-  name: 'MainInicio',
+  async mounted() {
+    this.nombreCompleto = localStorage.getItem('nombreCompleto') || 'Usuario';
+
+    try {
+      const token = localStorage.getItem('token');
+
+      // Obtener postulaciones
+      const responsePostulaciones = await axios.get('http://localhost:5001/api/solicitudes', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      this.postulaciones = responsePostulaciones.data;
+      this.aceptadas = this.postulaciones.filter(post => post.estado === 'Aceptada').length;
+      this.rechazadas = this.postulaciones.filter(post => post.estado === 'Rechazada').length;
+      this.enProceso = this.postulaciones.filter(post => post.estado === 'En Proceso').length;
+      const ultimaSemana = new Date();
+      ultimaSemana.setDate(ultimaSemana.getDate() - 7);
+      this.nuevasPostulaciones = this.postulaciones.filter(post => new Date(post.fecha) >= ultimaSemana).length;
+
+      // Obtener reportes
+      const responseReportes = await axios.get('http://localhost:5001/api/reportes/reporte', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const reportes = responseReportes.data;
+
+      // Calcular puntos acumulados
+      this.puntosAcumulados = reportes.reduce((total, reporte) => {
+        return (
+          total +
+          reporte.bonificaciones.actividades.reduce(
+            (sum, actividad) => sum + actividad.puntos,
+            0
+          )
+        );
+      }, 0);
+
+      // Calcular ganancias del mes
+      this.gananciasMes = reportes.reduce((total, reporte) => {
+        return total + reporte.pagos.reduce((sum, pago) => sum + pago.monto, 0);
+      }, 0);
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
+    }
+  },
+
   methods: {
     goToCalendar() {
       this.$router.push({ name: 'Calendario' });
@@ -147,8 +222,22 @@ export default {
     },
     redirigirRegistro() {
       this.$router.push({ name: 'RegistroAgente' });
-    }
-  }
+    },
+    formatDate(date) {
+      const d = new Date(date);
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    },
+    getColor(estado) {
+      return estado === 'Aceptada' ? 'green' : estado === 'Rechazada' ? 'red' : '#008080';
+    },
+    calcularPorcentajeGanancia() {
+    if (this.mesAnterior === 0) return 100; // Si el mes anterior es 0, es un 100% de incremento
+    return ((this.gananciasMes - this.mesAnterior) / this.mesAnterior * 100).toFixed(2);
+  },
+  },
 };
 </script>
 

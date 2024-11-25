@@ -1,18 +1,20 @@
-// routes/reporteRoutes.js
 const express = require('express');
 const router = express.Router();
-const reporteController = require('../controllers/reporteController');
+const {
+  obtenerReportes,
+  crearReporte,
+  actualizarReporte,
+  eliminarReporte,
+  actualizarPuntosAcumulados,
+} = require('../controllers/reporteController'); // Verifica que la ruta sea correcta
 
-// Ruta para obtener el reporte del agente
-router.get('/reporte', reporteController.obtenerReporte);
+// Rutas para reportes
+router.get('/reporte', obtenerReportes); // Obtener todos los reportes
+router.post('/reporte', crearReporte); // Crear un nuevo reporte
+router.put('/reporte/:id', actualizarReporte); // Actualizar un reporte por ID
+router.delete('/reporte/:id', eliminarReporte); // Eliminar un reporte por ID
+router.patch('/reporte/:id/puntos', actualizarPuntosAcumulados); // Actualizar puntos acumulados de un reporte
 
-// Ruta para crear o actualizar el reporte del agente
-router.post('/reporte', reporteController.crearOActualizarReporte);
 
-// Ruta para agregar una actividad de bonificación
-router.post('/reporte/actividad', reporteController.agregarActividad);
-
-// Ruta para canjear una recompensa
-router.post('/reporte/recompensa', reporteController.canjearRecompensa);
 
 module.exports = router;
