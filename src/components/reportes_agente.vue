@@ -174,13 +174,18 @@ export default {
   },
   methods: {
     async fetchReportes() {
-      try {
-        const response = await axios.get('http://localhost:5001/api/reportes/reporte');
-        this.reportes = response.data; // Asignar todos los reportes al arreglo
-      } catch (error) {
-        console.error('Error al obtener los reportes:', error);
-      }
-    },
+    try {
+      const token = localStorage.getItem('token'); // Obtener el token de autenticación
+      const response = await axios.get('http://localhost:5001/api/reportes/reporte', {
+        headers: {
+          'Authorization': `Bearer ${token}` // Incluir el token en la cabecera Authorization
+        }
+      });
+      this.reportes = response.data;
+    } catch (error) {
+      console.error('Error al obtener los reportes:', error);
+    }
+  },
     formatDate(date) {
       const d = new Date(date);
       return d.toLocaleDateString('en-US', {

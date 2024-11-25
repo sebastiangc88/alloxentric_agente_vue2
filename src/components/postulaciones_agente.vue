@@ -81,8 +81,12 @@ export default {
   methods: {
     async fetchPostulaciones() {
       try {
-        // Obtener todas las postulaciones desde el backend
-        const response = await axios.get('http://localhost:5001/api/solicitudes');
+        const token = localStorage.getItem('token'); // Obtener el token de autenticación
+        const response = await axios.get('http://localhost:5001/api/solicitudes', {
+          headers: {
+            'Authorization': `Bearer ${token}` // Incluir el token en la cabecera Authorization
+          }
+        });
         this.postulaciones = response.data;
       } catch (error) {
         console.error('Error al obtener las postulaciones:', error);
@@ -91,8 +95,12 @@ export default {
 
     async fetchTotales() {
       try {
-        // Obtener los totales de cada estado desde el backend
-        const response = await axios.get('http://localhost:5001/api/solicitudes/totales');
+        const token = localStorage.getItem('token'); // Obtener el token de autenticación
+        const response = await axios.get('http://localhost:5001/api/solicitudes/totales', {
+          headers: {
+            'Authorization': `Bearer ${token}` // Incluir el token en la cabecera Authorization
+          }
+        });
         this.aceptadas = response.data.aceptadas;
         this.rechazadas = response.data.rechazadas;
         this.enProceso = response.data.enProceso;
@@ -110,8 +118,8 @@ export default {
     },
 
     getColor(estado) {
-      if (estado === 'Aceptada') return 'green';
-      else if (estado === 'Rechazada') return 'red';
+      if (estado === 'aceptada') return 'green';
+      else if (estado === 'rechazada') return 'red';
       return '#EDDC68';
     },
   },

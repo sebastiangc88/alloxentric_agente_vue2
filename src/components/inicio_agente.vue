@@ -180,9 +180,11 @@ export default {
         headers: { Authorization: `Bearer ${token}` },
       });
       this.postulaciones = responsePostulaciones.data;
-      this.aceptadas = this.postulaciones.filter(post => post.estado === 'Aceptada').length;
-      this.rechazadas = this.postulaciones.filter(post => post.estado === 'Rechazada').length;
-      this.enProceso = this.postulaciones.filter(post => post.estado === 'En Proceso').length;
+
+      // Ajustar la lógica para obtener los totales
+      this.aceptadas = this.postulaciones.filter(postulacion => postulacion.estado === 'aceptada').length;
+      this.rechazadas = this.postulaciones.filter(postulacion => postulacion.estado === 'rechazada').length;
+      this.enProceso = this.postulaciones.filter(postulacion => postulacion.estado !== 'aceptada' && postulacion.estado !== 'rechazada').length;
       const ultimaSemana = new Date();
       ultimaSemana.setDate(ultimaSemana.getDate() - 7);
       this.nuevasPostulaciones = this.postulaciones.filter(post => new Date(post.fecha) >= ultimaSemana).length;

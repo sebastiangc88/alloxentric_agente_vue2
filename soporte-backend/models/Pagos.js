@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 
 const pagoSchema = new mongoose.Schema({
+  agente_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Agente', required: true }, // Agrega el ID del agente
   nombreEmpresa: {
     type: String,
     required: true

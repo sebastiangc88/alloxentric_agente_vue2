@@ -57,110 +57,108 @@
     </v-app-bar>
 
     <v-navigation-drawer app v-model="drawer" temporary>
-      <v-list>
-        <router-link :to="`/inicio/${userId}}`"> 
-          <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/inicio') }">
-            <v-list-item-icon>
-              <v-icon style="color:#008080">mdi-home</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Inicio</v-list-item-title>
-          </v-list-item>
-        </router-link>
-        <router-link to="/ofertas" class="sidebar-btn">
-          <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/ofertas') }">
-            <v-list-item-icon>
-              <v-icon style="color:#008080">mdi-briefcase</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Ofertas</v-list-item-title>
-          </v-list-item>
-        </router-link>
-        <router-link :to="`/calendario/${userId}`"> 
-          <v-list-item :class="{ 'v-list-item--active': $route.path === '/calendario' }">
-            <v-list-item-icon>
-              <v-icon style="color:#008080">mdi-calendar</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>Calendario</v-list-item-title>
-          </v-list-item>
-        </router-link>
+  <v-list>
+    <router-link :to="`/inicio/${userId}`"> 
+      <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/inicio') }">
+        <v-list-item-icon>
+          <v-icon style="color:#008080">mdi-home</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>Inicio</v-list-item-title>
+      </v-list-item>
+    </router-link>
+    <router-link :to="`/ofertas/`"> 
+      <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/ofertas') }">
+        <v-list-item-icon>
+          <v-icon style="color:#008080">mdi-briefcase</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>Ofertas</v-list-item-title>
+      </v-list-item>
+    </router-link>
+    <router-link :to="`/calendario/${userId}`"> 
+      <v-list-item :class="{ 'v-list-item--active': $route.path === '/calendario' }">
+        <v-list-item-icon>
+          <v-icon style="color:#008080">mdi-calendar</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>Calendario</v-list-item-title>
+      </v-list-item>
+    </router-link>
 
-        <v-list-group v-model="agentExpanded" :value="false" style="display: block;">
-          <template #activator>
-            <v-list-item-icon>
-              <v-icon color="#008080">mdi-account</v-icon> 
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Agente</v-list-item-title>
-            </v-list-item-content>
-          </template>
+    <v-list-group v-model="agentExpanded" :value="false" style="display: block;">
+      <template #activator>
+        <v-list-item-icon>
+          <v-icon color="#008080">mdi-account</v-icon> 
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Agente</v-list-item-title>
+        </v-list-item-content>
+      </template>
 
-          <router-link :to="`/agente/postulaciones/${userId}`">
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon style="color:#008080" class="ml-5">mdi-clipboard-text</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Postulaciones</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </router-link>
+      <router-link :to="`/agente/postulaciones/${userId}`" class="sidebar-btn"> 
+        <v-list-item>
+          <v-list-item-icon>
+            <v-icon style="color:#008080" class="ml-5">mdi-clipboard-text</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>Postulaciones</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </router-link>
 
-          <router-link :to="`/agente/certificaciones/${userId}`" >
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon style="color:#008080" class="ml-5">mdi-certificate</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Certificaciones</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </router-link>
+      <router-link :to="`/agente/certificaciones/${userId}`" class="sidebar-btn"> 
+        <v-list-item>
+          <v-list-item-icon>
+            <v-icon style="color:#008080" class="ml-5">mdi-certificate</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>Certificaciones</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </router-link>
 
-          <router-link :to="`/agente/evaluaciones/${userId}`">
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon style="color:#008080" class="ml-5">mdi-chart-pie</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Evaluaciones</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </router-link>
+      <router-link :to="`/agente/evaluaciones/${userId}`" class="sidebar-btn"> 
+        <v-list-item>
+          <v-list-item-icon>
+            <v-icon style="color:#008080" class="ml-5">mdi-chart-pie</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>Evaluaciones</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </router-link>
 
-          <router-link :to="`/agente/pagos/${userId}`">
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon style="color:#008080" class="ml-5">mdi-cash</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Pagos</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </router-link>
+      <router-link :to="`/agente/pagos/${userId}`" class="sidebar-btn"> 
+        <v-list-item>
+          <v-list-item-icon>
+            <v-icon style="color:#008080" class="ml-5">mdi-cash</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>Pagos</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </router-link>
 
-          <router-link :to="`/agente/reportes/${userId}`">
-            <v-list-item>
-              <v-list-item-icon>
-                <v-icon style="color:#008080" class="ml-5">mdi-chart-bar</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>Reportes</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </router-link>
-        </v-list-group>
+      <router-link :to="`/agente/reportes/${userId}`" class="sidebar-btn"> 
+        <v-list-item>
+          <v-list-item-icon>
+            <v-icon style="color:#008080" class="ml-5">mdi-chart-bar</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>Reportes</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item> 1 
+      </router-link>
+    </v-list-group>
 
-        <router-link :to="`/soporte/${userId}`">
-          <v-list-item :class="{ 'v-list-item--active': $route.path === '/soporte' }">
-            <v-list-item-icon>
-              <v-icon style="color:#008080">mdi-help-circle</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Soporte y Ayuda</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </router-link>
-      </v-list>
-    </v-navigation-drawer>
+    <router-link :to="`/soporte/${userId}`"> 
+      <v-list-item :class="{ 'v-list-item--active': $route.path === '/soporte' }">
+        <v-list-item-icon>
+          <v-icon style="color:#008080">mdi-help-circle-outline</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>Soporte y Ayuda</v-list-item-title>
+      </v-list-item>
+    </router-link>
+  </v-list>
+</v-navigation-drawer>
 
     <v-main>
       <router-view />
@@ -179,6 +177,15 @@ export default {
       correoUsuario: '' // Inicializa el correo
     };
   },
+  computed: {
+    userId() {
+      if (typeof window !== 'undefined') {
+        return localStorage.getItem('userID');
+      } else {
+        return null; 
+      }
+    }
+  },
   mounted() {
     // If the user ID is not found in localStorage, redirect to login
     if (typeof window !== 'undefined' && !localStorage.getItem('userID')) {
@@ -195,15 +202,6 @@ export default {
       this.$router.push('/configuracion');
     }
   }
-  },
-  computed: {
-    userId() { 
-      if (typeof window !== 'undefined') {
-        return localStorage.getItem('userID');
-      } else {
-        return null; // Or handle this case appropriately for SSR
-      }
-    }
-  },
+  }
 };
 </script>
