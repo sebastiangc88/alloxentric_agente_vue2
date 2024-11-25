@@ -58,7 +58,7 @@
 
     <v-navigation-drawer app v-model="drawer" temporary>
       <v-list>
-        <router-link to="/inicio">
+        <router-link :to="`/inicio/${userId}}`"> 
           <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/inicio') }">
             <v-list-item-icon>
               <v-icon style="color:#008080">mdi-home</v-icon>
@@ -66,7 +66,7 @@
             <v-list-item-title>Inicio</v-list-item-title>
           </v-list-item>
         </router-link>
-        <router-link to="/ofertas">
+        <router-link to="/ofertas" class="sidebar-btn">
           <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/ofertas') }">
             <v-list-item-icon>
               <v-icon style="color:#008080">mdi-briefcase</v-icon>
@@ -74,7 +74,7 @@
             <v-list-item-title>Ofertas</v-list-item-title>
           </v-list-item>
         </router-link>
-        <router-link to="/calendario">
+        <router-link :to="`/calendario/${userId}`"> 
           <v-list-item :class="{ 'v-list-item--active': $route.path === '/calendario' }">
             <v-list-item-icon>
               <v-icon style="color:#008080">mdi-calendar</v-icon>
@@ -93,7 +93,7 @@
             </v-list-item-content>
           </template>
 
-          <router-link to="/agente/postulaciones" class="sidebar-btn">
+          <router-link :to="`/agente/postulaciones/${userId}`">
             <v-list-item>
               <v-list-item-icon>
                 <v-icon style="color:#008080" class="ml-5">mdi-clipboard-text</v-icon>
@@ -104,7 +104,7 @@
             </v-list-item>
           </router-link>
 
-          <router-link to="/agente/certificaciones" class="sidebar-btn">
+          <router-link :to="`/agente/certificaciones/${userId}`" >
             <v-list-item>
               <v-list-item-icon>
                 <v-icon style="color:#008080" class="ml-5">mdi-certificate</v-icon>
@@ -115,7 +115,7 @@
             </v-list-item>
           </router-link>
 
-          <router-link to="/agente/evaluaciones" class="sidebar-btn">
+          <router-link :to="`/agente/evaluaciones/${userId}`">
             <v-list-item>
               <v-list-item-icon>
                 <v-icon style="color:#008080" class="ml-5">mdi-chart-pie</v-icon>
@@ -126,7 +126,7 @@
             </v-list-item>
           </router-link>
 
-          <router-link to="/agente/pagos" class="sidebar-btn">
+          <router-link :to="`/agente/pagos/${userId}`">
             <v-list-item>
               <v-list-item-icon>
                 <v-icon style="color:#008080" class="ml-5">mdi-cash</v-icon>
@@ -137,7 +137,7 @@
             </v-list-item>
           </router-link>
 
-          <router-link to="/agente/reportes" class="sidebar-btn">
+          <router-link :to="`/agente/reportes/${userId}`">
             <v-list-item>
               <v-list-item-icon>
                 <v-icon style="color:#008080" class="ml-5">mdi-chart-bar</v-icon>
@@ -149,7 +149,7 @@
           </router-link>
         </v-list-group>
 
-        <router-link to="/soporte">
+        <router-link :to="`/soporte/${userId}`">
           <v-list-item :class="{ 'v-list-item--active': $route.path === '/soporte' }">
             <v-list-item-icon>
               <v-icon style="color:#008080">mdi-help-circle</v-icon>
@@ -180,9 +180,14 @@ export default {
     };
   },
   mounted() {
-    // Recupera el nombre completo y el correo del usuario del localStorage
-    this.nombreCompleto = localStorage.getItem('nombreCompleto') || 'Usuario';
-    this.correoUsuario = localStorage.getItem('correoUsuario') || '';
+    // If the user ID is not found in localStorage, redirect to login
+    if (typeof window !== 'undefined' && !localStorage.getItem('userID')) {
+      this.$router.push('/login_agente');
+    } else {
+      // Recupera el nombre completo y el correo del usuario del localStorage
+      this.nombreCompleto = localStorage.getItem('nombreCompleto') || 'Usuario';
+      this.correoUsuario = localStorage.getItem('correoUsuario') || '';
+    }
   },
   methods: {
     irConfiguracionCuenta() {
@@ -190,6 +195,15 @@ export default {
       this.$router.push('/configuracion');
     }
   }
-  }
+  },
+  computed: {
+    userId() { 
+      if (typeof window !== 'undefined') {
+        return localStorage.getItem('userID');
+      } else {
+        return null; // Or handle this case appropriately for SSR
+      }
+    }
+  },
 };
 </script>

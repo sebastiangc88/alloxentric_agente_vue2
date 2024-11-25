@@ -53,7 +53,8 @@ exports.login = async (req, res) => {
       expiresIn: '1h',
     });
     console.log("Token generado:", token);
-    res.json({ token });
+    // Incluir el ID de usuario en la respuesta
+    res.json({ token, userId: user._id}); 
   } catch (error) {
     console.error("Error en login:", error);
     res.status(500).json({ message: 'Error al iniciar sesión' });

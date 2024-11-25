@@ -43,7 +43,7 @@ exports.obtenerEventos = async (req, res) => {
           // 9. Iterar sobre los horarios seleccionados en la postulación
           postulacion.horarios_seleccionados.forEach(horario => {
             const diaSemana = horario.dia;
-            const horas = horario.hora_inicio;
+            const horas = horario.hora_postulacion;
 
             // 10. Iterar sobre las horas del día
             horas.forEach(hora => {

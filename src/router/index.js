@@ -33,9 +33,10 @@ const routes = [
     component: RegistroAgente
   },
   {
-    path: '/inicio',
+    path: '/inicio/:id', // Agrega el parámetro :id a la ruta
     name: 'Inicio',
-    component: Inicio
+    component: Inicio,
+    props: true // Pasa el ID como prop al componente
   },
   {
     path: '/ofertas/:id',
@@ -49,42 +50,44 @@ const routes = [
     component: Ofertas
   },
   {
-    path: '/calendario',
+    path: '/calendario/:id', // Agrega el parámetro :id a la ruta
     name: 'Calendario',
-    component: Calendario
+    component: Calendario,
+    props: true // Pasa el ID como prop al componente
   },
   {
-    path: '/agente/postulaciones',
+    path: '/agente/postulaciones/:id', // Agrega el parámetro :id a la ruta
     name: 'postulaciones',
-    component: Postulaciones
+    component: Postulaciones,
+    props: true // Pasa el ID como prop al componente
   },
   {
-    path: '/agente/reportes',
+    path: '/agente/reportes/:id',
     name: 'reportes',
     component: Reportes
   },
   {
-    path: '/agente/certificaciones',
+    path: '/agente/certificaciones/:id',
     name: 'certificaciones',
     component: Certificaciones
   },
   {
-    path: '/agente/evaluaciones',
+    path: '/agente/evaluaciones/:id',
     name: 'evaluaciones',
     component: Evaluaciones
   },
   {
-    path: '/agente/pagos',
+    path: '/agente/pagos/:id',
     name: 'pagos',
     component: Pagos
   },
   {
-    path: '/soporte',
+    path: '/soporte/:id',
     name: 'soporte',
     component: Soporte
   },
   {
-    path: '/configuracion',
+    path: '/configuracion/:id',
     name: 'ConfiguracionCuenta',
     component: Configuracion
   }

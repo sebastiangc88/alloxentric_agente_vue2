@@ -243,7 +243,8 @@ export default {
     },
     async fetchEvents() {
       try {
-        const response = await fetch(`/api/calendario/calendario`);
+        const userId = this.$route.params.id; // Get the user ID from the route
+      const response = await fetch(`http://localhost:5001/api/calendario/${userId}`); 
         if (!response.ok) {
           throw new Error('Error al obtener eventos del calendario');
         }
@@ -251,7 +252,6 @@ export default {
         this.findNextEvent();
       } catch (error) {
         console.error(error);
-        // Manejar el error
       }
     },
     obtenerHoraInicio(activity) {

@@ -53,12 +53,13 @@ export default {
           password: this.password
         });
         
-        // Guarda el token en localStorage
+        // Guarda el variables en localStorage
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('correoUsuario', this.email); // Guarda el correo en localStorage
+        localStorage.setItem('userID', response.data.userId);
         
         // Redirige a la pantalla de inicio
-        this.$router.push('/inicio');
+        this.$router.push(`/inicio/${localStorage.getItem('userID')}`); 
       } catch (error) {
         // Verifica si el error es de autenticación
         if (error.response && error.response.status === 401) {
