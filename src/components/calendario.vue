@@ -92,7 +92,7 @@
                   <v-list-item v-for="activity in getDayActivities(dia)" :key="activity.id">
                     <v-list-item-content>
                       <v-list-item-title>
-                        {{ activity.date.format('HH:mm') }} - {{ activity.title }}
+                        {{ obtenerHoraInicio(activity) }} - {{ activity.titulo }}
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -214,11 +214,11 @@ export default {
     },
     mesAnterior() {
       this.fecha = moment(this.fecha).tz('America/Santiago').subtract(1, 'months').startOf('month').toDate();
-      this.fetchEvents(); // Actualizar eventos al cambiar de mes
+      this.fetchEvents();
     },
     mesSiguiente() {
       this.fecha = moment(this.fecha).tz('America/Santiago').add(1, 'months').startOf('month').toDate();
-      this.fetchEvents(); // Actualizar eventos al cambiar de mes
+      this.fetchEvents();
     },
     esFeriado(dia) {
       return this.holidays.some((holiday) =>
@@ -232,9 +232,12 @@ export default {
       return holiday ? holiday.name : '';
     },
     getDayActivities(dia) {
-      const actividadesDelDia = this.activities.filter((activity) =>
-        moment(activity.fecha_inicio).tz('America/Santiago').isSame(moment(dia).tz('America/Santiago'), 'day')
-      );
+      console.log("Filtering activities for day:", dia);
+      const actividadesDelDia = this.activities.filter((activity) => {
+        const isSame = moment(activity.fecha_inicio).tz('America/Santiago').isSame(moment(dia).tz('America/Santiago'), 'day');
+        console.log("Comparing activity date", activity.fecha_inicio, "with", dia, "result:", isSame);
+        return isSame;
+      });
 
       // Ordena las actividades por hora de inicio
       actividadesDelDia.sort((a, b) => moment(a.fecha_inicio).tz('America/Santiago').diff(moment(b.fecha_inicio).tz('America/Santiago')));
@@ -244,11 +247,11 @@ export default {
     async fetchEvents() {
       try {
         const userId = localStorage.getItem('userID');
-        const token = localStorage.getItem('token'); // Obtener el token de autenticación
+        const token = localStorage.getItem('token'); 
 
         const response = await fetch(`http://localhost:5001/api/calendario/${userId}`, {
           headers: {
-            'Authorization': `Bearer ${token}` // Incluir el token en la cabecera Authorization
+            'Authorization': `Bearer ${token}` 
           }
         });
 
@@ -262,15 +265,20 @@ export default {
       }
     },
     obtenerHoraInicio(activity) {
-      if (activity.tipo === 'oferta') {
+      if (activity.tipo === 'oferta' && activity.horas_seleccionadas) {
         const horasSeleccionadas = activity.horas_seleccionadas.find(horario =>
           moment(activity.fecha_inicio).tz('America/Santiago').isSame(moment(this.fecha).day(horario.dia), 'day')
         );
-        return horasSeleccionadas ? horasSeleccionadas.horas[0] : '--:--';
+        if (horasSeleccionadas) {
+          return horasSeleccionadas.horas[0];
+        } else {
+          console.log("No se encontraron horas seleccionadas para este día en la actividad:", activity);
+          return '--:--';
+        }
       } else {
         return moment(activity.fecha_inicio).tz('America/Santiago').format('HH:mm');
       }
-    },
+    }
   },
 };
 </script>
