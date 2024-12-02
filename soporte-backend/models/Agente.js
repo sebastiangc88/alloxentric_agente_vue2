@@ -47,7 +47,7 @@ const agenteSchema = new mongoose.Schema({
     type: String 
   },
   idiomas: [{
-    idioma: { 
+    codigo: { 
       type: String, 
       required: true 
     },

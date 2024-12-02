@@ -65,27 +65,27 @@
                   <v-checkbox-group v-model="idiomasSeleccionados" class="mb-2">
                     <v-checkbox
                       v-for="idioma in idiomasDisponibles"
-                      :key="idioma"
-                      :label="idioma"
-                      :value="idioma.toLowerCase()"
-                      @change="toggleIdioma(idioma.toLowerCase())"
+                      :key="idioma.codigo"
+                      :label="idioma.nombre"
+                      :value="idioma.codigo"
+                      @change="toggleIdioma(idioma.codigo)"
                       dense
                     ></v-checkbox>
                   </v-checkbox-group>
 
                   <!-- Selector de nivel de idioma para cada idioma seleccionado -->
-                  <div v-for="idioma in idiomasSeleccionados" :key="idioma" class="mt-2">
+                  <div v-for="idiomaCodigo in idiomasSeleccionados" :key="idiomaCodigo" class="mt-2">
                     <v-select
-                      v-if="idioma !== 'otro'"
-                      v-model="nivelesIdioma[idioma]"
+                      v-if="idiomaCodigo !== 'otro'"
+                      v-model="nivelesIdioma[idiomaCodigo]"
                       :items="niveles"
-                      :label="`Nivel de ${idioma.charAt(0).toUpperCase() + idioma.slice(1)}`"
-                      @change="cambiarNivelIdioma(idioma, nivelesIdioma[idioma])"
+                      :label="`Nivel de ${obtenerNombreIdioma(idiomaCodigo)}`"
+                      @change="cambiarNivelIdioma(idiomaCodigo, nivelesIdioma[idiomaCodigo])"
                       dense
                       outlined
                     ></v-select>
                     <!-- Campo de entrada para el idioma personalizado y nivel de idioma -->
-                    <div v-if="idioma === 'otro'">
+                    <div v-if="idiomaCodigo === 'otro'">
                       <v-text-field
                         v-model="otroIdioma"
                         label="Especifique el idioma"
@@ -94,10 +94,10 @@
                         class="mt-1"
                       ></v-text-field>
                       <v-select
-                        v-model="nivelesIdioma[idioma]"
+                        v-model="nivelesIdioma[idiomaCodigo]"
                         :items="niveles"
                         label="Nivel de idioma personalizado"
-                        @change="cambiarNivelIdioma(idioma, nivelesIdioma[idioma])"
+                        @change="cambiarNivelIdioma(idiomaCodigo, nivelesIdioma[idiomaCodigo])"
                         dense
                         outlined
                         class="mt-1"
@@ -122,8 +122,7 @@
 </template>
 
 <script>
-
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
@@ -132,31 +131,40 @@ export default {
       menu: false,
       whatsappVerificado: false,
       fechaNacimiento: null,
-      fechaNacimientoFormatted: '',
-      nombreCompleto: '',
-      idFiscal: '',
-      telefono: '',
-      genero: '',
-      selectedPais: '',
-      experiencia: '',
-      habilidades: '',
+      fechaNacimientoFormatted: "",
+      nombreCompleto: "",
+      idFiscal: "",
+      telefono: "",
+      genero: "",
+      selectedPais: "",
+      experiencia: "",
+      habilidades: "",
       idiomasSeleccionados: [],
       nivelesIdioma: {},
-      otroIdioma: '',
+      otroIdioma: "",
       tiposAgenteSeleccionados: [],
-      paises: ['Argentina', 'Chile', 'México', 'Perú'],
-      generos: ['Masculino', 'Femenino', 'Otro'],
+      paises: ["Argentina", "Chile", "México", "Perú"],
+      generos: ["Masculino", "Femenino", "Otro"],
       tiposAgenteDisponibles: [
-        'Agente de Soporte',
-        'Agente de Servicios',
-        'Agente de Cobranzas',
-        'Agente de Ventas',
+        "Agente de Soporte",
+        "Agente de Servicios",
+        "Agente de Cobranzas",
+        "Agente de Ventas",
       ],
-      idiomasDisponibles: ['Español', 'Inglés', 'Portugués', 'Otro'],
-      niveles: ['Básico', 'Intermedio', 'Avanzado', 'Nativo'],
+      idiomasDisponibles: [
+        { codigo: "es", nombre: "Español" },
+        { codigo: "en", nombre: "Inglés" },
+        { codigo: "pt", nombre: "Portugués" },
+        { codigo: "otro", nombre: "Otro" },
+      ],
+      niveles: ["Básico", "Intermedio", "Avanzado", "Nativo"],
     };
   },
   methods: {
+    obtenerNombreIdioma(codigo) {
+      const idioma = this.idiomasDisponibles.find((i) => i.codigo === codigo);
+      return idioma ? idioma.nombre : "Desconocido";
+    },
     simularVerificacionWhatsapp() {
       this.whatsappVerificado = true;
     },
@@ -165,85 +173,61 @@ export default {
     },
     ingresarDatosTributarios() {},
     volverAtras() {
-      this.$router.push('/login'); // Asumiendo que vuelve a la pantalla de login
+      this.$router.push("/login");
     },
     async finalizarRegistro() {
       try {
-        const token = localStorage.getItem('token');
-        
-        // Formatea los datos de idiomas seleccionados con sus niveles
-        const idiomas = this.idiomasSeleccionados.map(idioma => ({
-          idioma,
-          nivel: this.nivelesIdioma[idioma] || 'Básico'
+        const token = localStorage.getItem("token");
+
+        const idiomas = this.idiomasSeleccionados.map((codigo) => ({
+          codigo,
+          nivel: this.nivelesIdioma[codigo] || "Básico",
         }));
 
-        console.log({
-          nombreCompleto: this.nombreCompleto,
-          idFiscal: this.idFiscal,
-          telefono: this.telefono,
-          whatsappVerificado: this.whatsappVerificado,
-          fechaNacimiento: this.fechaNacimiento,
-          genero: this.genero,
-          pais: this.selectedPais,
-          tiposAgenteSeleccionados: this.tiposAgenteSeleccionados,
-          experiencia: this.experiencia,
-          habilidades: this.habilidades,
-          idiomas,
-          otroIdioma: this.otroIdioma
-        });
-
-        // Enviar solicitud POST al backend
-        await axios.post('http://localhost:5001/api/agentes/registro', {
-          nombreCompleto: this.nombreCompleto,
-          idFiscal: this.idFiscal,
-          telefono: this.telefono,
-          whatsappVerificado: this.whatsappVerificado,
-          fechaNacimiento: this.fechaNacimiento,
-          genero: this.genero,
-          pais: this.selectedPais,
-          tiposAgenteSeleccionados: this.tiposAgenteSeleccionados,
-          experiencia: this.experiencia,
-          habilidades: this.habilidades,
-          idiomas,
-          otroIdioma: this.otroIdioma
-        }, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        await axios.post(
+          "http://localhost:5001/api/agentes/registro",
+          {
+            nombreCompleto: this.nombreCompleto,
+            idFiscal: this.idFiscal,
+            telefono: this.telefono,
+            whatsappVerificado: this.whatsappVerificado,
+            fechaNacimiento: this.fechaNacimiento,
+            genero: this.genero,
+            pais: this.selectedPais,
+            tiposAgenteSeleccionados: this.tiposAgenteSeleccionados,
+            experiencia: this.experiencia,
+            habilidades: this.habilidades,
+            idiomas,
+            otroIdioma: this.otroIdioma,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
 
-        alert('Registro completado con éxito');
-
-        localStorage.setItem('nombreCompleto', this.nombreCompleto); // Guarda el nombre del agente
-        localStorage.setItem('agenteRegistrado', true); // Marca el agente como registrado
-        this.$router.push('/inicio');
+        alert("Registro completado con éxito");
+        this.$router.push("/inicio");
       } catch (error) {
-        console.error('Error al registrar agente:', error);
-        alert('Hubo un problema al registrar los datos. Intenta nuevamente.');
+        console.error("Error al registrar agente:", error);
+        alert("Hubo un problema al registrar los datos. Intenta nuevamente.");
       }
     },
-    
-    // Método para alternar la selección de idiomas y nivel predeterminado
-    toggleIdioma(idioma) {
-      const index = this.idiomasSeleccionados.indexOf(idioma);
+    toggleIdioma(codigo) {
+      const index = this.idiomasSeleccionados.indexOf(codigo);
       if (index > -1) {
         this.idiomasSeleccionados.splice(index, 1);
-        this.$delete(this.nivelesIdioma, idioma); // Elimina el nivel si el idioma se desmarca
-        if (idioma === 'otro') this.otroIdioma = ''; // Limpia el campo de idioma personalizado
+        this.$delete(this.nivelesIdioma, codigo);
+        if (codigo === "otro") this.otroIdioma = "";
       } else {
-        this.idiomasSeleccionados.push(idioma);
-        if (idioma !== 'otro') {
-          this.$set(this.nivelesIdioma, idioma, 'Básico'); // Establece 'Básico' como nivel predeterminado
-        } else {
-          this.$set(this.nivelesIdioma, idioma, 'Básico'); // Nivel predeterminado para idioma personalizado
-        }
+        this.idiomasSeleccionados.push(codigo);
+        this.$set(this.nivelesIdioma, codigo, "Básico");
       }
     },
-    
-    // Método para actualizar el nivel de idioma seleccionado
-    cambiarNivelIdioma(idioma, nivel) {
-      if (this.idiomasSeleccionados.includes(idioma)) {
-        this.$set(this.nivelesIdioma, idioma, nivel);
+    cambiarNivelIdioma(codigo, nivel) {
+      if (this.idiomasSeleccionados.includes(codigo)) {
+        this.$set(this.nivelesIdioma, codigo, nivel);
       }
     },
   },
