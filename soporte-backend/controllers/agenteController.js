@@ -20,12 +20,12 @@ exports.registrarAgente = async (req, res) => {
       otroIdioma
     } = req.body;
 
-    // `userId` siempre estará disponible gracias a `authMiddleware`
-    const userId = req.userid
+    // Obtener el ID del usuario del token
+    const userId = req.user.id; 
 
     // Crea un nuevo agente con los datos del formulario
     const agente = new Agente({
-      userId,
+      userId, 
       nombreCompleto,
       idFiscal,
       telefono,
@@ -43,7 +43,7 @@ exports.registrarAgente = async (req, res) => {
     await agente.save();
     res.status(201).json({ message: 'Datos de agente registrados exitosamente' });
   } catch (error) {
-    console.error('Error al registrar el agente:', error); // Muestra el error en la consola
+    console.error('Error al registrar el agente:', error);
     res.status(500).json({ message: 'Error al registrar datos del agente', error: error.message });
   }
 };

@@ -28,7 +28,7 @@ const routes = [
     component: LoginAgente
   },
   {
-    path: '/registro',
+    path: '/registro/:id',
     name: 'RegistroAgente',
     component: RegistroAgente
   },

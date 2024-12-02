@@ -2,15 +2,17 @@
   <v-app>
     <v-app-bar color="#008080" dark app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title class="d-flex align-center">
-        <img
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/alloxentric.png-WQlEJS2mNDVHfJLAmhR9JbaAD3urYs.webp"
-          alt="Alloxentric Logo"
-          style="width: 26px; height: 26px;"
-          class="mr-2"
-        />
-        Alloxentric
-      </v-toolbar-title>
+      <router-link :to="`/inicio/${userId}`"> 
+        <v-toolbar-title class="d-flex align-center">
+          <img
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/alloxentric.png-WQlEJS2mNDVHfJLAmhR9JbaAD3urYs.webp"
+            alt="Alloxentric Logo"
+            style="width: 26px; height: 26px;"
+            class="mr-2"
+          />
+          <span class="white--text">Alloxentric</span>
+        </v-toolbar-title>
+      </router-link>
       <v-spacer></v-spacer>
       <v-menu bottom left>
         <template v-slot:activator="{ on, attrs }">
@@ -198,10 +200,14 @@ export default {
   },
   methods: {
     irConfiguracionCuenta() {
-    if (this.$route.path !== '/configuracion') {
-      this.$router.push('/configuracion');
+      // Obtener el ID del usuario del localStorage
+      const userId = localStorage.getItem('userID'); 
+
+      if (this.$route.path !== `/configuracion/${userId}`) {
+        // Redirigir a la página de configuración con el ID del usuario
+        this.$router.push(`/configuracion/${userId}`); 
+      }
     }
-  }
   }
 };
 </script>

@@ -88,15 +88,27 @@
               <div class="text-center">
                 <span v-if="dia" class="text-xl font-weight-bold">{{ dia.getDate() }}</span>
                 <div v-if="esFeriado(dia)" class="mt-2 text-red--text">{{ obtenerNombreFeriado(dia) }}</div>
-                <v-list v-if="dia && getDayActivities(dia).length" class="mt-2">
-                  <v-list-item v-for="activity in getDayActivities(dia)" :key="activity.id">
+                <v-tooltip bottom v-if="getDayActivities(dia).length">
+                <template v-slot:activator="{ on, attrs }">
+                  <div v-bind="attrs" v-on="on">
+                    <span v-if="getDayActivities(dia).length > 0">
+                      {{ getDayActivities(dia).length }} actividad(es)
+                    </span>
+                  </div>
+                </template>
+                <v-list class="mt-2">
+                  <v-list-item v-for="activity in getDayActivities(dia)" :key="activity._id">
                     <v-list-item-content>
                       <v-list-item-title>
                         {{ obtenerHoraInicio(activity) }} - {{ activity.titulo }}
                       </v-list-item-title>
+                      <v-list-item-subtitle v-if="activity.descripcion">
+                        {{ activity.descripcion }}
+                      </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
+              </v-tooltip>
               </div>
             </div>
           </v-sheet>
@@ -265,19 +277,7 @@ export default {
       }
     },
     obtenerHoraInicio(activity) {
-      if (activity.tipo === 'oferta' && activity.horas_seleccionadas) {
-        const horasSeleccionadas = activity.horas_seleccionadas.find(horario =>
-          moment(activity.fecha_inicio).tz('America/Santiago').isSame(moment(this.fecha).day(horario.dia), 'day')
-        );
-        if (horasSeleccionadas) {
-          return horasSeleccionadas.horas[0];
-        } else {
-          console.log("No se encontraron horas seleccionadas para este día en la actividad:", activity);
-          return '--:--';
-        }
-      } else {
-        return moment(activity.fecha_inicio).tz('America/Santiago').format('HH:mm');
-      }
+      return activity.horas_seleccionadas[0][0];
     }
   },
 };
@@ -301,5 +301,8 @@ export default {
   border-radius: 8px;
   width: 90%;
   left: 100px;
+}
+.day-cell { 
+  overflow-y: auto;
 }
 </style>

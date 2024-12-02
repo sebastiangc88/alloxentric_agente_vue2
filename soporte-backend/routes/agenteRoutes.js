@@ -3,8 +3,8 @@ const { registrarAgente, obtenerDatosAgente, actualizarDatosAgente } = require('
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 
-// Ruta para registrar un agente (sin autenticación, ya que es el registro inicial)
-router.post('/registro', registrarAgente);
+// Ruta para registrar un agente
+router.post('/registro', authMiddleware, registrarAgente); 
 
 // Ruta para obtener los datos del agente (requiere autenticación)
 router.get('/datos', authMiddleware, obtenerDatosAgente);
