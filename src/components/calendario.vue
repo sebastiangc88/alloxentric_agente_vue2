@@ -26,7 +26,7 @@
                 <p>
                   <strong>Horario:</strong>
                   <span v-if="nearestEvent">
-                    {{ nearestEvent.date.format('HH:mm') }}
+                    {{ nearestEvent.fecha_inicio.format('HH:mm') }} 
                   </span>
                   <span v-else>--:--</span>
                 </p>
@@ -188,12 +188,59 @@ export default {
     findNextEvent() {
       const now = moment().tz('America/Santiago');
       let upcomingEvents = this.activities.filter((activity) => {
-        const activityTime = moment(activity.fecha_inicio).tz('America/Santiago');
-        return activityTime.isAfter(now);
+        // 1. Check if the activity is an "oferta"
+        if (activity.tipo === 'oferta' && activity.horas_seleccionadas) {  
+          // 2. Iterate over the horarios_seleccionados array
+          return activity.horas_seleccionadas.some(horario => {
+            // 3. Calculate the activity time using the horario information
+            const activityTime = moment(activity.fecha_inicio)
+              .tz('America/Santiago')
+              .day(horario.dia) 
+              .set({
+                hour: horario.hora_inicio[0].split(':')[0],
+                minute: horario.hora_inicio[0].split(':')[1]
+              });
+            // 4. Check if this activityTime is after now
+            return activityTime.isAfter(now); 
+          });
+        } else {
+          // 5. If it's not an "oferta", use the existing fecha_inicio
+          const activityTime = moment(activity.fecha_inicio).tz('America/Santiago');
+          return activityTime.isAfter(now);
+        }
       });
 
       if (upcomingEvents.length > 0) {
-        upcomingEvents.sort((a, b) => moment(a.fecha_inicio).tz('America/Santiago').diff(moment(b.fecha_inicio).tz('America/Santiago')));
+        upcomingEvents.sort((a, b) => {
+          let aTime = moment(a.fecha_inicio).tz('America/Santiago');
+          let bTime = moment(b.fecha_inicio).tz('America/Santiago');
+
+          if (a.tipo === 'oferta' && a.horas_seleccionadas) {
+            const horarioA = a.horas_seleccionadas.find(horario =>
+              aTime.isSame(moment(this.fecha).day(horario.dia), 'day')
+            );
+            if (horarioA) {
+              aTime = aTime.set({
+                hour: horarioA.hora_inicio[0].split(':')[0],
+                minute: horarioA.hora_inicio[0].split(':')[1]
+              });
+            }
+          }
+
+          if (b.tipo === 'oferta' && b.horas_seleccionadas) {
+            const horarioB = b.horas_seleccionadas.find(horario =>
+              bTime.isSame(moment(this.fecha).day(horario.dia), 'day')
+            );
+            if (horarioB) {
+              bTime = bTime.set({
+                hour: horarioB.hora_inicio[0].split(':')[0],
+                minute: horarioB.hora_inicio[0].split(':')[1]
+              });
+            }
+          }
+
+          return aTime.diff(bTime);
+        });
         this.nearestEvent = upcomingEvents[0];
         this.actualizarCuentaRegresiva();
       } else {

@@ -173,10 +173,12 @@ export default {
     async postularse() {
       try {
         const ofertaId = this.$route.params.id;
+        const token = localStorage.getItem('token'); 
         const response = await fetch(`http://localhost:5001/api/ofertas/${ofertaId}/post`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             horarios_seleccionados: this.selectedSlots.map((slot) => {
