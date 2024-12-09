@@ -128,13 +128,18 @@ export default {
   methods: {
     async cargarCertificaciones() {
       try {
-        const response = await axios.get("http://localhost:5001/api/certificaciones");
-        const { progresoGeneral, completadas, enProgreso, disponibles } = response.data;
+        const token = localStorage.getItem('token'); // Get the token
+        const userId = localStorage.getItem('userID'); // Get the user ID
 
-        this.progresoGeneral = progresoGeneral;
-        this.certificaciones = completadas;
-        this.cursos = enProgreso;
-        this.cursosDisponibles = disponibles;
+        const response = await axios.get(`http://localhost:5001/api/certificaciones/${userId}`, { // Updated URL
+          headers: {
+            Authorization: `Bearer ${token}` // Include the token in the headers
+          }
+        });
+
+        // Assuming the backend returns an array of certifications
+        this.certificaciones = response.data;
+
       } catch (error) {
         console.error("Error al cargar las certificaciones:", error);
       }

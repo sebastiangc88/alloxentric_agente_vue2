@@ -4,9 +4,12 @@
     <v-row class="mb-6">
       <v-col cols="12">
         <h1 class="text-h4 font-weight-bold text-primary mt-6">
-          Bienvenido, {{ nombreCompleto }}
-          <span v-if="nombreCompleto === 'Usuario'">
-            (<a @click.prevent="redirigirRegistro">Regístrese sus datos aquí</a>)
+          Bienvenido, 
+          <span v-if="!agenteRegistrado">
+            <a @click.prevent="redirigirRegistro">Regístrese sus datos aquí</a>
+          </span>
+          <span v-else>
+            {{ nombreCompleto }}
           </span>
         </h1>
       </v-col>
@@ -145,6 +148,7 @@ export default {
       gananciasMes: 0,
       siguienteNivel: 10000,
       mesAnterior: 0,
+      agenteRegistrado: null,
     };
   },
 
@@ -174,6 +178,7 @@ export default {
 
     try {
       const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userID');
 
       // Obtener postulaciones
       const responsePostulaciones = await axios.get('http://localhost:5001/api/solicitudes', {
@@ -210,6 +215,13 @@ export default {
       this.gananciasMes = reportes.reduce((total, reporte) => {
         return total + reporte.pagos.reduce((sum, pago) => sum + pago.monto, 0);
       }, 0);
+
+      // Verificar si el agente ya está registrado
+      const responseAgente = await axios.get(`http://localhost:5001/api/agentes/${userId}/verificar`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      this.agenteRegistrado = responseAgente.data.registrado; // Actualizar la variable según la respuesta del backend
+
     } catch (error) {
       console.error('Error al obtener los datos:', error);
     }
@@ -221,9 +233,6 @@ export default {
     },
     goToApplications() {
       this.$router.push({ name: 'postulaciones' });
-    },
-    redirigirRegistro() {
-      this.$router.push({ name: 'RegistroAgente' });
     },
     formatDate(date) {
       const d = new Date(date);
@@ -239,6 +248,10 @@ export default {
     if (this.mesAnterior === 0) return 100; // Si el mes anterior es 0, es un 100% de incremento
     return ((this.gananciasMes - this.mesAnterior) / this.mesAnterior * 100).toFixed(2);
   },
+    redirigirRegistro() {
+      const userId = localStorage.getItem('userID');
+      this.$router.push({ name: 'RegistroAgente', params: { id: userId } });
+    },
   },
 };
 </script>

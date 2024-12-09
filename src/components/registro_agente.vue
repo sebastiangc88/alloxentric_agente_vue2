@@ -118,6 +118,36 @@
         </v-card>
       </v-container>
     </v-main>
+
+    <v-dialog v-model="showBancoDialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Ingresar datos bancarios</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="bancoForm" v-model="bancoValid">
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-text-field v-model="banco" label="Banco" required></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-text-field v-model="tipoCuenta" label="Tipo de cuenta" required></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field v-model="numeroCuenta" label="Número de cuenta" required></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="showBancoDialog = false">Cerrar</v-btn>
+          <v-btn color="blue darken-1" text @click="guardarDatosBancarios">Guardar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -127,6 +157,11 @@ import axios from "axios";
 export default {
   data() {
     return {
+      showBancoDialog: false,
+      banco: null,
+      tipoCuenta: null,
+      numeroCuenta: null,
+      bancoValid: false,
       valid: false,
       menu: false,
       whatsappVerificado: false,
@@ -228,6 +263,34 @@ export default {
     cambiarNivelIdioma(codigo, nivel) {
       if (this.idiomasSeleccionados.includes(codigo)) {
         this.$set(this.nivelesIdioma, codigo, nivel);
+      }
+    },
+    async guardarDatosBancarios() {
+      if (this.$refs.bancoForm.validate()) {
+        try {
+          const token = localStorage.getItem('token');
+          const userId = localStorage.getItem('userID');
+
+          await axios.post(
+            `http://localhost:5001/api/agentes/${userId}/bancario`, 
+            {
+              banco: this.banco,
+              tipoCuenta: this.tipoCuenta,
+              numeroCuenta: this.numeroCuenta,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          this.showBancoDialog = false; // Cierra el diálogo después de guardar
+          alert("Datos bancarios guardados con éxito");
+        } catch (error) {
+          console.error("Error al guardar datos bancarios:", error);
+          alert("Hubo un problema al guardar los datos bancarios. Intenta nuevamente.");
+        }
       }
     },
   },

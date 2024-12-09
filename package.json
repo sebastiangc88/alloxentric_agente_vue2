@@ -12,6 +12,7 @@
     "bcryptjs": "^2.4.3",
     "core-js": "^3.8.3",
     "date-holidays": "^3.23.12",
+    "jwt-decode": "^4.0.0",
     "moment-timezone": "^0.5.46",
     "vue": "^2.6.14",
     "vue-router": "^3.5.1",

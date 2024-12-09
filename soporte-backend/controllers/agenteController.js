@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 // Registrar un nuevo agente
 exports.registrarAgente = async (req, res) => {
   try {
-    const { 
+    const {
       nombreCompleto,
       idFiscal,
       telefono,
@@ -21,11 +21,11 @@ exports.registrarAgente = async (req, res) => {
     } = req.body;
 
     // Obtener el ID del usuario del token
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
     // Crea un nuevo agente con los datos del formulario
     const agente = new Agente({
-      userId, 
+      userId,
       nombreCompleto,
       idFiscal,
       telefono,
@@ -69,7 +69,7 @@ exports.actualizarDatosAgente = async (req, res) => {
     if (updates.password) {
       updates.password = await bcrypt.hash(updates.password, 10); // Encripta la contraseña si es proporcionada
     }
-    
+
     const agente = await Agente.findOneAndUpdate(
       { userId: req.user.id },
       updates,
@@ -84,5 +84,17 @@ exports.actualizarDatosAgente = async (req, res) => {
   } catch (error) {
     console.error('Error al actualizar los datos del agente:', error);
     res.status(500).json({ message: 'Error al actualizar los datos del agente', error: error.message });
+  }
+};
+
+//verificar que el agente esta registrado
+exports.verificarAgente = async (req, res) => {
+  try {
+    const userId = req.user.id; // Obtener el ID del usuario del token
+    const agente = await Agente.findOne({ userId }); // Buscar al agente por el ID del usuario
+    res.status(200).json({ registrado: !!agente }); // Retornar true si el agente existe, false si no
+  } catch (error) {
+    console.error('Error al verificar el agente:', error);
+    res.status(500).json({ message: 'Error al verificar el agente' });
   }
 };

@@ -26,7 +26,7 @@
                 <p>
                   <strong>Horario:</strong>
                   <span v-if="nearestEvent">
-                    {{ nearestEvent.fecha_inicio.format('HH:mm') }} 
+                    {{ nearestEvent.fecha_inicio.format('HH:mm') }}
                   </span>
                   <span v-else>--:--</span>
                 </p>
@@ -188,23 +188,16 @@ export default {
     findNextEvent() {
       const now = moment().tz('America/Santiago');
       let upcomingEvents = this.activities.filter((activity) => {
-        // 1. Check if the activity is an "oferta"
-        if (activity.tipo === 'oferta' && activity.horas_seleccionadas) {  
-          // 2. Iterate over the horarios_seleccionados array
+        if (activity.tipo === 'oferta' && activity.horas_seleccionadas) {
           return activity.horas_seleccionadas.some(horario => {
-            // 3. Calculate the activity time using the horario information
-            const activityTime = moment(activity.fecha_inicio)
+            const [hour, minute] = horario.hora_inicio[0].split(':');
+            const activityTime = moment(this.fecha)
               .tz('America/Santiago')
-              .day(horario.dia) 
-              .set({
-                hour: horario.hora_inicio[0].split(':')[0],
-                minute: horario.hora_inicio[0].split(':')[1]
-              });
-            // 4. Check if this activityTime is after now
-            return activityTime.isAfter(now); 
+              .day(horario.dia)
+              .set({ hour: parseInt(hour), minute: parseInt(minute) });
+            return activityTime.isAfter(now);
           });
         } else {
-          // 5. If it's not an "oferta", use the existing fecha_inicio
           const activityTime = moment(activity.fecha_inicio).tz('America/Santiago');
           return activityTime.isAfter(now);
         }
@@ -248,6 +241,7 @@ export default {
         this.timeRemaining = 'No hay eventos próximos.';
       }
     },
+
     actualizarCuentaRegresiva() {
       if (this.nearestEvent) {
         if (this.interval) {
@@ -255,7 +249,20 @@ export default {
         }
         this.interval = setInterval(() => {
           const now = moment().tz('America/Santiago');
-          const eventTime = moment(this.nearestEvent.fecha_inicio).tz('America/Santiago');
+
+          let eventTime = moment(this.nearestEvent.fecha_inicio).tz('America/Santiago');
+          if (this.nearestEvent.tipo === 'oferta' && this.nearestEvent.horas_seleccionadas) {
+            const horario = this.nearestEvent.horas_seleccionadas.find(horario =>
+              eventTime.isSame(moment(this.fecha).day(horario.dia), 'day')
+            );
+            if (horario) {
+              eventTime = eventTime.set({
+                hour: horario.hora_inicio[0].split(':')[0],
+                minute: horario.hora_inicio[0].split(':')[1]
+              });
+            }
+          }
+
           const duration = moment.duration(eventTime.diff(now));
 
           if (duration.asMilliseconds() <= 0) {
@@ -306,11 +313,11 @@ export default {
     async fetchEvents() {
       try {
         const userId = localStorage.getItem('userID');
-        const token = localStorage.getItem('token'); 
+        const token = localStorage.getItem('token');
 
         const response = await fetch(`http://localhost:5001/api/calendario/${userId}`, {
           headers: {
-            'Authorization': `Bearer ${token}` 
+            'Authorization': `Bearer ${token}`
           }
         });
 
@@ -337,7 +344,7 @@ export default {
   padding: 20px;
   width: 90%;
   left: 100px;
-  
+
 
 }
 
@@ -349,7 +356,7 @@ export default {
   width: 90%;
   left: 100px;
 }
-.day-cell { 
+.day-cell {
   overflow-y: auto;
 }
 </style>
