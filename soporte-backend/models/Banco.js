@@ -5,11 +5,11 @@ const bancoSchema = new mongoose.Schema({
   agente_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Agente',
-    required: true
+    required: true //indica soi es obligatorio
   },
   banco: {
-    type: String,
-    required: true
+    type: String, //indica el tipo de dato
+    required: true //indica soi es obligatorio
   },
   tipoCuenta: {
     type: String,

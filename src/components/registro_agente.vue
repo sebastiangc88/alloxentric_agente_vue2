@@ -157,68 +157,76 @@ import axios from "axios";
 export default {
   data() {
     return {
-      showBancoDialog: false,
-      banco: null,
-      tipoCuenta: null,
-      numeroCuenta: null,
-      bancoValid: false,
-      valid: false,
-      menu: false,
-      whatsappVerificado: false,
-      fechaNacimiento: null,
-      fechaNacimientoFormatted: "",
-      nombreCompleto: "",
-      idFiscal: "",
-      telefono: "",
-      genero: "",
-      selectedPais: "",
-      experiencia: "",
-      habilidades: "",
-      idiomasSeleccionados: [],
-      nivelesIdioma: {},
-      otroIdioma: "",
-      tiposAgenteSeleccionados: [],
-      paises: ["Argentina", "Chile", "México", "Perú"],
-      generos: ["Masculino", "Femenino", "Otro"],
-      tiposAgenteDisponibles: [
+      showBancoDialog: false, // Controla la visibilidad del diálogo de datos bancarios
+      banco: null, // Banco seleccionado
+      tipoCuenta: null, // Tipo de cuenta bancaria
+      numeroCuenta: null, // Número de cuenta bancaria
+      bancoValid: false, // Validación del banco
+      valid: false, // Validación general del formulario
+      menu: false, // Estado del menú de fecha de nacimiento
+      whatsappVerificado: false, // Estado de verificación de WhatsApp
+      fechaNacimiento: null, // Fecha de nacimiento
+      fechaNacimientoFormatted: "", // Fecha de nacimiento formateada
+      nombreCompleto: "", // Nombre completo
+      idFiscal: "", // ID fiscal
+      telefono: "", // Teléfono
+      genero: "", // Género
+      selectedPais: "", // País seleccionado
+      experiencia: "", // Experiencia laboral
+      habilidades: "", // Habilidades
+      idiomasSeleccionados: [], // Idiomas seleccionados
+      nivelesIdioma: {}, // Niveles de los idiomas seleccionados
+      otroIdioma: "", // Otro idioma, en caso de que se seleccione "Otro"
+      tiposAgenteSeleccionados: [], // Tipos de agente seleccionados
+      paises: ["Argentina", "Chile", "México", "Perú"], // Países disponibles
+      generos: ["Masculino", "Femenino", "Otro"], // Géneros disponibles
+      tiposAgenteDisponibles: [ // Tipos de agente disponibles
         "Agente de Soporte",
         "Agente de Servicios",
         "Agente de Cobranzas",
         "Agente de Ventas",
       ],
-      idiomasDisponibles: [
+      idiomasDisponibles: [ // Idiomas disponibles
         { codigo: "es", nombre: "Español" },
         { codigo: "en", nombre: "Inglés" },
         { codigo: "pt", nombre: "Portugués" },
         { codigo: "otro", nombre: "Otro" },
       ],
-      niveles: ["Básico", "Intermedio", "Avanzado", "Nativo"],
+      niveles: ["Básico", "Intermedio", "Avanzado", "Nativo"], // Niveles de idioma
     };
   },
   methods: {
+    // Obtiene el nombre del idioma a partir de su código
     obtenerNombreIdioma(codigo) {
       const idioma = this.idiomasDisponibles.find((i) => i.codigo === codigo);
       return idioma ? idioma.nombre : "Desconocido";
     },
+    // Simula la verificación de WhatsApp
     simularVerificacionWhatsapp() {
       this.whatsappVerificado = true;
     },
+    // Controla la visibilidad del menú de fecha de nacimiento
     fechaNacimientoMenu(val) {
       this.menu = val;
     },
+    // Método vacío para ingresar datos tributarios
     ingresarDatosTributarios() {},
+    // Vuelve a la página de login
     volverAtras() {
       this.$router.push("/login");
     },
+    // Método que envía los datos del registro del agente
     async finalizarRegistro() {
       try {
         const token = localStorage.getItem("token");
 
+        // Prepara los idiomas seleccionados con sus niveles
         const idiomas = this.idiomasSeleccionados.map((codigo) => ({
           codigo,
           nivel: this.nivelesIdioma[codigo] || "Básico",
         }));
 
+        // Realiza una solicitud POST para registrar al agente
         await axios.post(
           "http://localhost:5001/api/agentes/registro",
           {
@@ -237,18 +245,19 @@ export default {
           },
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token}`, // Envia el token de autenticación
             },
           }
         );
 
         alert("Registro completado con éxito");
-        this.$router.push("/inicio");
+        this.$router.push("/inicio"); // Redirige al inicio
       } catch (error) {
         console.error("Error al registrar agente:", error);
         alert("Hubo un problema al registrar los datos. Intenta nuevamente.");
       }
     },
+    // Agrega o elimina un idioma de la lista de idiomas seleccionados
     toggleIdioma(codigo) {
       const index = this.idiomasSeleccionados.indexOf(codigo);
       if (index > -1) {
@@ -260,11 +269,13 @@ export default {
         this.$set(this.nivelesIdioma, codigo, "Básico");
       }
     },
+    // Cambia el nivel de un idioma seleccionado
     cambiarNivelIdioma(codigo, nivel) {
       if (this.idiomasSeleccionados.includes(codigo)) {
         this.$set(this.nivelesIdioma, codigo, nivel);
       }
     },
+    // Guarda los datos bancarios del agente
     async guardarDatosBancarios() {
       if (this.$refs.bancoForm.validate()) {
         try {
@@ -280,7 +291,7 @@ export default {
             },
             {
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${token}`, // Envia el token de autenticación
               },
             }
           );
@@ -296,6 +307,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .d-flex.align-center {

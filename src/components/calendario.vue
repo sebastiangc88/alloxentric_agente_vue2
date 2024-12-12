@@ -119,35 +119,38 @@
 </template>
 
 <script>
-import moment from 'moment-timezone';
-import Holidays from 'date-holidays';
+import moment from 'moment-timezone'; // Importa la librería moment para manejar fechas y zonas horarias
+import Holidays from 'date-holidays'; // Importa la librería Holidays para trabajar con días festivos
 
 export default {
-  name: 'calendarioActividades',
+  name: 'calendarioActividades', // Nombre del componente
   data() {
+    // Instancia de Holidays configurada para Chile
     const hd = new Holidays('CL');
-    const currentYear = moment().tz('America/Santiago').year();
-    const holidays = hd.getHolidays(currentYear);
+    const currentYear = moment().tz('America/Santiago').year(); // Año actual en la zona horaria de Santiago
+    const holidays = hd.getHolidays(currentYear); // Obtiene los feriados del año actual
 
     return {
-      fecha: moment().tz('America/Santiago').toDate(),
-      selectedDate: moment().tz('America/Santiago').toDate(),
-      activities: [],
-      holidays: holidays.map((holiday) => ({
-        date: moment.tz(holiday.date, 'America/Santiago').toDate(),
-        name: holiday.name,
+      fecha: moment().tz('America/Santiago').toDate(), // Fecha actual
+      selectedDate: moment().tz('America/Santiago').toDate(), // Fecha seleccionada
+      activities: [], // Actividades del calendario
+      holidays: holidays.map((holiday) => ({ 
+        date: moment.tz(holiday.date, 'America/Santiago').toDate(), // Convierte las fechas de los feriados
+        name: holiday.name, // Nombre del feriado
       })),
-      timeRemaining: '',
-      diasSemana: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-      nearestEvent: null,
-      interval: null,
-      drawer: false,
+      timeRemaining: '', // Tiempo restante para el próximo evento
+      diasSemana: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'], // Días de la semana
+      nearestEvent: null, // Evento más próximo
+      interval: null, // Intervalo para la cuenta regresiva
+      drawer: false, // Estado del drawer (desplegable lateral)
     };
   },
   computed: {
+    // Computa el nombre del mes actual en formato "Mes Año"
     mesActual() {
       return moment(this.fecha).locale('es').tz('America/Santiago').format('MMMM YYYY');
     },
+    // Calcula los días del mes actual, incluyendo los espacios vacíos al inicio
     datosMes() {
       const startOfMonth = moment(this.fecha).tz('America/Santiago').startOf('month');
       const endOfMonth = moment(this.fecha).tz('America/Santiago').endOf('month');
@@ -155,11 +158,9 @@ export default {
       const firstDay = startOfMonth.day();
 
       const daysArray = [];
-
       for (let i = 0; i < firstDay; i++) {
         daysArray.push(null);
       }
-
       for (let i = 1; i <= daysInMonth; i++) {
         daysArray.push(startOfMonth.clone().add(i - 1, 'days').toDate());
       }
@@ -168,25 +169,25 @@ export default {
     },
   },
   mounted() {
-    this.actualizarFechaActual();
-    this.findNextEvent();
-    this.fetchEvents();
+    this.actualizarFechaActual(); // Inicializa la fecha actual
+    this.findNextEvent(); // Busca el evento más próximo
+    this.fetchEvents(); // Obtiene eventos del servidor
   },
   beforeDestroy() {
     if (this.interval) {
-      clearInterval(this.interval);
+      clearInterval(this.interval); // Limpia el intervalo si existe
     }
   },
   methods: {
     iniciarTurno() {
-      console.log('Turno iniciado');
+      console.log('Turno iniciado'); // Acción placeholder para iniciar un turno
     },
     actualizarFechaActual() {
-      this.fecha = moment().tz('America/Santiago').toDate();
-      this.selectedDate = this.fecha;
+      this.fecha = moment().tz('America/Santiago').toDate(); // Actualiza la fecha a la actual
+      this.selectedDate = this.fecha; // Actualiza la fecha seleccionada
     },
     findNextEvent() {
-      const now = moment().tz('America/Santiago');
+      const now = moment().tz('America/Santiago'); // Fecha actual
       let upcomingEvents = this.activities.filter((activity) => {
         if (activity.tipo === 'oferta' && activity.horas_seleccionadas) {
           return activity.horas_seleccionadas.some(horario => {
@@ -205,64 +206,25 @@ export default {
 
       if (upcomingEvents.length > 0) {
         upcomingEvents.sort((a, b) => {
-          let aTime = moment(a.fecha_inicio).tz('America/Santiago');
-          let bTime = moment(b.fecha_inicio).tz('America/Santiago');
-
-          if (a.tipo === 'oferta' && a.horas_seleccionadas) {
-            const horarioA = a.horas_seleccionadas.find(horario =>
-              aTime.isSame(moment(this.fecha).day(horario.dia), 'day')
-            );
-            if (horarioA) {
-              aTime = aTime.set({
-                hour: horarioA.hora_inicio[0].split(':')[0],
-                minute: horarioA.hora_inicio[0].split(':')[1]
-              });
-            }
-          }
-
-          if (b.tipo === 'oferta' && b.horas_seleccionadas) {
-            const horarioB = b.horas_seleccionadas.find(horario =>
-              bTime.isSame(moment(this.fecha).day(horario.dia), 'day')
-            );
-            if (horarioB) {
-              bTime = bTime.set({
-                hour: horarioB.hora_inicio[0].split(':')[0],
-                minute: horarioB.hora_inicio[0].split(':')[1]
-              });
-            }
-          }
-
+          const aTime = moment(a.fecha_inicio).tz('America/Santiago');
+          const bTime = moment(b.fecha_inicio).tz('America/Santiago');
           return aTime.diff(bTime);
         });
-        this.nearestEvent = upcomingEvents[0];
-        this.actualizarCuentaRegresiva();
+        this.nearestEvent = upcomingEvents[0]; // Establece el evento más próximo
+        this.actualizarCuentaRegresiva(); // Actualiza la cuenta regresiva
       } else {
         this.nearestEvent = null;
-        this.timeRemaining = 'No hay eventos próximos.';
+        this.timeRemaining = 'No hay eventos próximos.'; // Mensaje cuando no hay eventos
       }
     },
-
     actualizarCuentaRegresiva() {
       if (this.nearestEvent) {
         if (this.interval) {
-          clearInterval(this.interval);
+          clearInterval(this.interval); // Limpia cualquier intervalo previo
         }
         this.interval = setInterval(() => {
           const now = moment().tz('America/Santiago');
-
-          let eventTime = moment(this.nearestEvent.fecha_inicio).tz('America/Santiago');
-          if (this.nearestEvent.tipo === 'oferta' && this.nearestEvent.horas_seleccionadas) {
-            const horario = this.nearestEvent.horas_seleccionadas.find(horario =>
-              eventTime.isSame(moment(this.fecha).day(horario.dia), 'day')
-            );
-            if (horario) {
-              eventTime = eventTime.set({
-                hour: horario.hora_inicio[0].split(':')[0],
-                minute: horario.hora_inicio[0].split(':')[1]
-              });
-            }
-          }
-
+          const eventTime = moment(this.nearestEvent.fecha_inicio).tz('America/Santiago');
           const duration = moment.duration(eventTime.diff(now));
 
           if (duration.asMilliseconds() <= 0) {
@@ -279,42 +241,35 @@ export default {
       }
     },
     mesAnterior() {
-      this.fecha = moment(this.fecha).tz('America/Santiago').subtract(1, 'months').startOf('month').toDate();
-      this.fetchEvents();
+      this.fecha = moment(this.fecha).tz('America/Santiago').subtract(1, 'months').startOf('month').toDate(); // Cambia al mes anterior
+      this.fetchEvents(); // Refresca los eventos
     },
     mesSiguiente() {
-      this.fecha = moment(this.fecha).tz('America/Santiago').add(1, 'months').startOf('month').toDate();
-      this.fetchEvents();
+      this.fecha = moment(this.fecha).tz('America/Santiago').add(1, 'months').startOf('month').toDate(); // Cambia al siguiente mes
+      this.fetchEvents(); // Refresca los eventos
     },
     esFeriado(dia) {
       return this.holidays.some((holiday) =>
         moment(holiday.date).tz('America/Santiago').isSame(moment(dia).tz('America/Santiago'), 'day')
-      );
+      ); // Verifica si un día es feriado
     },
     obtenerNombreFeriado(dia) {
       const holiday = this.holidays.find((holiday) =>
         moment(holiday.date).tz('America/Santiago').isSame(moment(dia).tz('America/Santiago'), 'day')
       );
-      return holiday ? holiday.name : '';
+      return holiday ? holiday.name : ''; // Obtiene el nombre del feriado si existe
     },
     getDayActivities(dia) {
-      console.log("Filtering activities for day:", dia);
-      const actividadesDelDia = this.activities.filter((activity) => {
-        const isSame = moment(activity.fecha_inicio).tz('America/Santiago').isSame(moment(dia).tz('America/Santiago'), 'day');
-        console.log("Comparing activity date", activity.fecha_inicio, "with", dia, "result:", isSame);
-        return isSame;
-      });
-
-      // Ordena las actividades por hora de inicio
+      const actividadesDelDia = this.activities.filter((activity) =>
+        moment(activity.fecha_inicio).tz('America/Santiago').isSame(moment(dia).tz('America/Santiago'), 'day')
+      );
       actividadesDelDia.sort((a, b) => moment(a.fecha_inicio).tz('America/Santiago').diff(moment(b.fecha_inicio).tz('America/Santiago')));
-
-      return actividadesDelDia;
+      return actividadesDelDia; // Retorna actividades ordenadas por hora
     },
     async fetchEvents() {
       try {
         const userId = localStorage.getItem('userID');
         const token = localStorage.getItem('token');
-
         const response = await fetch(`http://localhost:5001/api/calendario/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -325,17 +280,18 @@ export default {
           throw new Error('Error al obtener eventos del calendario');
         }
         this.activities = await response.json();
-        this.findNextEvent();
+        this.findNextEvent(); // Actualiza el próximo evento tras obtener los datos
       } catch (error) {
         console.error(error);
       }
     },
     obtenerHoraInicio(activity) {
-      return activity.horas_seleccionadas[0][0];
+      return activity.horas_seleccionadas[0][0]; // Obtiene la hora de inicio de una actividad
     }
   },
 };
 </script>
+
 
 <style scoped>
 .control-de-entrada {

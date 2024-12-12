@@ -8,6 +8,7 @@
           </v-card-title>
           <v-card-text>
             <v-row>
+              <!-- Progreso General -->
               <v-col cols="12">
                 <div class="progreso-general">
                   <h2 class="subtitulo">Progreso General</h2>
@@ -27,6 +28,7 @@
                 </div>
               </v-col>
 
+              <!-- Certificaciones Logradas -->
               <v-col cols="12" md="6">
                 <div class="logradas">
                   <h2 class="subtitulo">Logradas</h2>
@@ -48,6 +50,7 @@
                 </div>
               </v-col>
 
+              <!-- Cursos en Progreso -->
               <v-col cols="12" md="6">
                 <div class="en-progreso">
                   <h2 class="subtitulo">En Progreso</h2>
@@ -69,6 +72,7 @@
                 </div>
               </v-col>
 
+              <!-- Cursos Disponibles -->
               <v-col cols="12">
                 <div class="cursos-disponibles">
                   <h2 class="subtitulo">Cursos Disponibles</h2>
@@ -111,6 +115,7 @@
     </v-row>
   </v-container>
 </template>
+
 
 <script>
 import axios from "axios";

@@ -1,8 +1,11 @@
 <template>
   <v-app>
-    //cabecera
+    <!-- Cabecera con fondo de color teal -->
     <v-app-bar color="#008080" dark app>
+      <!-- Icono para abrir o cerrar el panel lateral -->
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      
+      <!-- Enlace al inicio con logo Alloxentric -->
       <router-link :to="`/inicio/${userId}`">
         <v-toolbar-title class="d-flex align-center">
           <img
@@ -14,14 +17,17 @@
           <span class="white--text">Alloxentric</span>
         </v-toolbar-title>
       </router-link>
+
+      <!-- Espaciador para alinear elementos a la derecha -->
       <v-spacer></v-spacer>
+      
+      <!-- Menú desplegable para seleccionar idioma -->
       <v-menu bottom left>
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
             <v-icon>mdi-translate</v-icon>
           </v-btn>
         </template>
-
         <v-list>
           <v-list-item v-for="(item, index) in idiomas" :key="index">
             <v-list-item-title>{{ item.title }}</v-list-item-title>
@@ -29,10 +35,12 @@
         </v-list>
       </v-menu>
 
+      <!-- Menú desplegable de notificaciones -->
       <v-menu bottom right offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
             <v-icon>mdi-bell</v-icon>
+            <!-- Muestra el número de notificaciones no leídas -->
             <v-badge v-if="unreadNotifications > 0" color="red" overlap :content="unreadNotifications"></v-badge>
           </v-btn>
         </template>
@@ -46,6 +54,7 @@
                 <v-list-item-subtitle>{{ notificacion.mensaje }}</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
+                <!-- Botón para marcar la notificación como leída -->
                 <v-btn icon @click="marcarNotificacionComoLeida(index)">
                   <v-icon v-if="!notificacion.leida">mdi-check-circle-outline</v-icon>
                   <v-icon v-else color="green">mdi-check-circle</v-icon>
@@ -56,6 +65,7 @@
         </v-card>
       </v-menu>
 
+      <!-- Menú desplegable para el perfil del usuario -->
       <v-menu bottom left>
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
@@ -73,9 +83,11 @@
             <v-list-item-subtitle>{{ correoUsuario }}</v-list-item-subtitle>
           </v-list-item>
           <v-divider></v-divider>
+          <!-- Enlace a la configuración de cuenta -->
           <v-list-item @click="irConfiguracionCuenta">
             <v-list-item-title>Configuración de cuenta</v-list-item-title>
           </v-list-item>
+          <!-- Enlace para editar la foto de perfil -->
           <v-list-item @click="editarFotoPerfil">
             <v-list-item-title>Editar foto de perfil</v-list-item-title>
           </v-list-item>
@@ -83,233 +95,216 @@
       </v-menu>
     </v-app-bar>
 
+    <!-- Panel lateral de navegación -->
     <v-navigation-drawer app v-model="drawer" temporary>
-  <v-list>
-    <router-link :to="`/inicio/${userId}`">
-      <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/inicio') }">
-        <v-list-item-icon>
-          <v-icon style="color:#008080">mdi-home</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>Inicio</v-list-item-title>
-      </v-list-item>
-    </router-link>
-    <router-link :to="`/ofertas/`">
-      <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/ofertas') }">
-        <v-list-item-icon>
-          <v-icon style="color:#008080">mdi-briefcase</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>Ofertas</v-list-item-title>
-      </v-list-item>
-    </router-link>
-    <router-link :to="`/calendario/${userId}`">
-      <v-list-item :class="{ 'v-list-item--active': $route.path === '/calendario' }">
-        <v-list-item-icon>
-          <v-icon style="color:#008080">mdi-calendar</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>Calendario</v-list-item-title>
-      </v-list-item>
-    </router-link>
+      <v-list>
+        <!-- Enlace a la página de inicio -->
+        <router-link :to="`/inicio/${userId}`">
+          <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/inicio') }">
+            <v-list-item-icon>
+              <v-icon style="color:#008080">mdi-home</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Inicio</v-list-item-title>
+          </v-list-item>
+        </router-link>
+        
+        <!-- Enlace a la página de ofertas -->
+        <router-link :to="`/ofertas/`">
+          <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/ofertas') }">
+            <v-list-item-icon>
+              <v-icon style="color:#008080">mdi-briefcase</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Ofertas</v-list-item-title>
+          </v-list-item>
+        </router-link>
 
-    <v-list-group v-model="agentExpanded" :value="false" style="display: block;">
-      <template #activator>
-        <v-list-item-icon>
-          <v-icon color="#008080">mdi-account</v-icon>
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>Agente</v-list-item-title>
-        </v-list-item-content>
-      </template>
+        <!-- Enlace al calendario -->
+        <router-link :to="`/calendario/${userId}`">
+          <v-list-item :class="{ 'v-list-item--active': $route.path === '/calendario' }">
+            <v-list-item-icon>
+              <v-icon style="color:#008080">mdi-calendar</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Calendario</v-list-item-title>
+          </v-list-item>
+        </router-link>
 
-      <router-link :to="`/agente/postulaciones/${userId}`" class="sidebar-btn">
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon style="color:#008080" class="ml-5">mdi-clipboard-text</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>Postulaciones</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </router-link>
+        <!-- Sección de Agente con sub-enlaces -->
+        <v-list-group v-model="agentExpanded" :value="false" style="display: block;">
+          <template #activator>
+            <v-list-item-icon>
+              <v-icon color="#008080">mdi-account</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Agente</v-list-item-title>
+            </v-list-item-content>
+          </template>
 
-      <router-link :to="`/agente/certificaciones/${userId}`" class="sidebar-btn">
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon style="color:#008080" class="ml-5">mdi-certificate</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>Certificaciones</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </router-link>
+          <!-- Sub-enlace para postulaciones -->
+          <router-link :to="`/agente/postulaciones/${userId}`" class="sidebar-btn">
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon style="color:#008080" class="ml-5">mdi-clipboard-text</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Postulaciones</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </router-link>
 
-      <router-link :to="`/agente/evaluaciones/${userId}`" class="sidebar-btn">
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon style="color:#008080" class="ml-5">mdi-chart-pie</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>Evaluaciones</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </router-link>
+          <!-- Sub-enlace para certificaciones -->
+          <router-link :to="`/agente/certificaciones/${userId}`" class="sidebar-btn">
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon style="color:#008080" class="ml-5">mdi-certificate</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Certificaciones</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </router-link>
 
-      <router-link :to="`/agente/pagos/${userId}`" class="sidebar-btn">
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon style="color:#008080" class="ml-5">mdi-cash</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>Pagos</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </router-link>
+          <!-- Sub-enlace para evaluaciones -->
+          <router-link :to="`/agente/evaluaciones/${userId}`" class="sidebar-btn">
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon style="color:#008080" class="ml-5">mdi-chart-pie</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Evaluaciones</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </router-link>
 
-      <router-link :to="`/agente/reportes/${userId}`" class="sidebar-btn">
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon style="color:#008080" class="ml-5">mdi-chart-bar</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>Reportes</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item> 1
-      </router-link>
-    </v-list-group>
+          <!-- Sub-enlace para pagos -->
+          <router-link :to="`/agente/pagos/${userId}`" class="sidebar-btn">
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon style="color:#008080" class="ml-5">mdi-cash</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Pagos</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </router-link>
 
-    <router-link :to="`/soporte/${userId}`">
-      <v-list-item :class="{ 'v-list-item--active': $route.path === '/soporte' }">
-        <v-list-item-icon>
-          <v-icon style="color:#008080">mdi-help-circle-outline</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>Soporte y Ayuda</v-list-item-title>
-      </v-list-item>
-    </router-link>
-  </v-list>
-</v-navigation-drawer>
+          <!-- Sub-enlace para reportes -->
+          <router-link :to="`/agente/reportes/${userId}`" class="sidebar-btn">
+            <v-list-item>
+              <v-list-item-icon>
+                <v-icon style="color:#008080" class="ml-5">mdi-chart-bar</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>Reportes</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </router-link>
+        </v-list-group>
+        
+        <!-- Enlace a soporte -->
+        <router-link :to="`/soporte/`">
+          <v-list-item :class="{ 'v-list-item--active': $route.path.startsWith('/soporte') }">
+            <v-list-item-icon>
+              <v-icon style="color:#008080">mdi-help-circle</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Soporte</v-list-item-title>
+          </v-list-item>
+        </router-link>
+      </v-list>
+    </v-navigation-drawer>
 
+    <!-- Contenido Principal (Dinamico) -->
     <v-main>
+      <!-- Contenido se inyecta aquí según la ruta -->
       <router-view />
     </v-main>
 
-    <v-dialog v-model="dialogFotoPerfil" max-width="500">
-  <v-card>
-    <v-card-title class="headline">Subir Foto de Perfil</v-card-title>
-    <v-card-text>
-      <v-file-input
-        label="Selecciona una imagen"
-        accept="image/*"
-        v-model="nuevaFotoPerfil"
-      ></v-file-input>
-    </v-card-text>
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn color="primary" text @click="guardarFotoPerfil">Guardar</v-btn>
-      <v-btn text @click="dialogFotoPerfil = false">Cancelar</v-btn>
-    </v-card-actions>
-  </v-card>
-</v-dialog>
+    <!-- Diálogo de carga de foto de perfil -->
+    <v-dialog v-model="editDialog" persistent max-width="600px">
+      <v-card>
+        <v-card-title class="headline">Subir foto de perfil</v-card-title>
+        <v-card-text>
+          <!-- Selector de archivo -->
+          <v-file-input label="Seleccionar archivo" v-model="fotoPerfil" accept="image/*"></v-file-input>
+        </v-card-text>
+        <v-card-actions>
+          <!-- Botones para guardar o cancelar -->
+          <v-btn color="primary" @click="guardarFotoPerfil">Guardar</v-btn>
+          <v-btn color="secondary" @click="cerrarDialogo">Cancelar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
 <script>
-  import jwt_decode from 'jwt-decode';
-  import router from './router';
-
-  // Función para verificar si el token es válido
-  function isTokenValid() {
-    const token = localStorage.getItem('token');
-    if (!token) {
+export default {
+  data() {
+    return {
+      // Controla si el panel lateral está abierto o cerrado
+      drawer: false,
+      // Idiomas disponibles
+      idiomas: [
+        { title: "Español" },
+        { title: "Inglés" }
+      ],
+      // Datos del usuario
+      userId: "123",
+      unreadNotifications: 2,
+      notificaciones: [
+        { titulo: "Nueva oferta", mensaje: "Se ha publicado una nueva oferta de trabajo.", leida: false },
+        { titulo: "Recordatorio", mensaje: "No olvides tu entrevista mañana.", leida: false }
+      ],
+      nombreCompleto: "Juan Pérez",
+      correoUsuario: "juan.perez@example.com",
+      fotoPerfil: null,
+      editDialog: false,
+      agentExpanded: false,
+    };
+  },
+  methods: {
+    // Verifica la validez del token JWT
+    isTokenValid() {
+      const token = localStorage.getItem('jwtToken');
+      if (token) {
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        return decodedToken.exp > Date.now() / 1000;
+      }
       return false;
+    },
+    // Redirige al login si el token no es válido
+    redirectToLoginIfTokenInvalid() {
+      if (!this.isTokenValid()) {
+        this.$router.push('/login');
+      }
+    },
+    // Marca una notificación como leída
+    marcarNotificacionComoLeida(index) {
+      this.notificaciones[index].leida = true;
+      this.unreadNotifications--;
+    },
+    // Función para redirigir a la configuración de la cuenta
+    irConfiguracionCuenta() {
+      this.$router.push('/configuracion');
+    },
+    // Abre el diálogo para editar la foto de perfil
+    editarFotoPerfil() {
+      this.editDialog = true;
+    },
+    // Cierra el diálogo de edición de foto de perfil
+    cerrarDialogo() {
+      this.editDialog = false;
+    },
+    // Guarda la nueva foto de perfil
+    guardarFotoPerfil() {
+      // Lógica para guardar la foto de perfil
+      this.editDialog = false;
     }
-    try {
-      const decodedToken = jwt_decode(token);
-      const currentTime = Date.now() / 1000;
-      return decodedToken.exp > currentTime;
-    } catch (error) {
-      console.error('Error al decodificar el token:', error);
-      return false;
+  },
+  watch: {
+    // Al cambiar la ruta, verificar si el token sigue siendo válido
+    $route(to, from) {
+      this.redirectToLoginIfTokenInvalid();
     }
   }
-
-  // Función para redirigir al login si el token no es válido
-  function redirectToLoginIfTokenInvalid() {
-    if (!isTokenValid() && this.$route.path !== '/login_agente') {
-      router.push('/login_agente');
-    }
-  }
-
-  export default {
-    data() {
-      return {
-        drawer: false,
-        idiomas: [{ title: 'ES' }],
-        agentExpanded: false,
-        nombreCompleto: 'Usuario',
-        correoUsuario: '',
-        notificaciones: [],
-        fotoPerfil: null,
-        dialogFotoPerfil: false,
-        nuevaFotoPerfil: null,
-      };
-    },
-    computed: {
-      userId() {
-        if (typeof window !== 'undefined') {
-          return localStorage.getItem('userID');
-        } else {
-          return null;
-        }
-      },
-      unreadNotifications() {
-        return this.notificaciones.filter(n => !n.leida).length;
-      }
-    },
-    mounted() {
-      redirectToLoginIfTokenInvalid();
-
-      this.notificaciones.push({
-        titulo: "Bienvenido",
-        mensaje: `Hola, ${this.nombreCompleto}. ¡Bienvenido a Alloxentric!`,
-        leida: false // Agregar el estado de la notificación
-      });
-
-      this.fotoPerfil = localStorage.getItem("fotoPerfil");
-
-      setInterval(redirectToLoginIfTokenInvalid, 60000);
-
-      if (typeof window !== 'undefined' && !localStorage.getItem('userID')) {
-        this.$router.push('/login_agente');
-      } else {
-        this.nombreCompleto = localStorage.getItem('nombreCompleto') || 'Usuario';
-        this.correoUsuario = localStorage.getItem('correoUsuario') || '';
-      }
-    },
-    methods: {
-      irConfiguracionCuenta() {
-        const userId = localStorage.getItem('userID');
-
-        if (this.$route.path !== `/configuracion/${userId}`) {
-          this.$router.push(`/configuracion/${userId}`);
-        }
-      },
-      editarFotoPerfil() {
-        this.dialogFotoPerfil = true;
-      },
-
-      guardarFotoPerfil() {
-        if (this.nuevaFotoPerfil) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            this.fotoPerfil = reader.result;
-            localStorage.setItem("fotoPerfil", reader.result);
-            this.dialogFotoPerfil = false;
-          };
-          reader.readAsDataURL(this.nuevaFotoPerfil);
-        }
-      },
-      marcarNotificacionComoLeida(index) {
-        this.notificaciones[index].leida = true;
-      }
-    }
-  };
+};
 </script>

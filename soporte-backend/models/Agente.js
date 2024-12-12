@@ -7,8 +7,8 @@ const agenteSchema = new mongoose.Schema({
     required: false // Cambiado a opcional para permitir el registro sin autenticación
   },
   nombreCompleto: { 
-    type: String, 
-    required: true 
+    type: String, //indica el tipo de dato
+    required: true  //indica soi es obligatorio
   },
   idFiscal: { 
     type: String, 

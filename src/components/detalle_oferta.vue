@@ -142,74 +142,80 @@
 export default {
   data() {
     return {
-      selectedSlots: [],
-      timeSlots: Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, "0")}:00`),
-      days: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
-      oferta: null,
+      selectedSlots: [], // Arreglo que guarda los horarios seleccionados
+      timeSlots: Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, "0")}:00`), // Lista de horarios del día
+      days: ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"], // Días de la semana
+      oferta: null, // Objeto que contiene la oferta cargada
     };
   },
   computed: {
+    // Calcula las ganancias semanales basadas en los slots seleccionados
     weeklyEarnings() {
-      return this.selectedSlots.length * (this.oferta?.hourlyRate || 0);
+      return this.selectedSlots.length * (this.oferta?.hourlyRate || 0); // Multipllica los slots seleccionados por la tarifa por hora de la oferta
     },
   },
   methods: {
+    // Cambia el estado de un slot (lo selecciona o lo deselecciona)
     toggleSlot(day, time) {
-      const slotKey = `${day}-${time}`;
-      if (!this.isSlotAvailableOnDay(day, time)) return;
+      const slotKey = `${day}-${time}`; // Crea una clave única para el slot
+      if (!this.isSlotAvailableOnDay(day, time)) return; // Si el slot no está disponible, no hace nada
       if (this.selectedSlots.includes(slotKey)) {
-        this.selectedSlots = this.selectedSlots.filter((slot) => slot !== slotKey);
+        this.selectedSlots = this.selectedSlots.filter((slot) => slot !== slotKey); // Deselecciona el slot
       } else {
-        this.selectedSlots.push(slotKey);
+        this.selectedSlots.push(slotKey); // Selecciona el slot
       }
     },
+    // Verifica si un slot está disponible en un día específico
     isSlotAvailableOnDay(day, time) {
-      const diaDisponibilidad = this.oferta?.disponibilidad?.find((disp) => disp.dia === day);
-      return diaDisponibilidad?.horas_disp?.includes(time);
+      const diaDisponibilidad = this.oferta?.disponibilidad?.find((disp) => disp.dia === day); // Busca el día en la disponibilidad de la oferta
+      return diaDisponibilidad?.horas_disp?.includes(time); // Verifica si la hora está disponible en ese día
     },
+    // Verifica si un slot está seleccionado
     isSlotSelected(day, time) {
-      return this.selectedSlots.includes(`${day}-${time}`);
+      return this.selectedSlots.includes(`${day}-${time}`); // Verifica si el slot está en los seleccionados
     },
+    // Realiza la postulación con los horarios seleccionados
     async postularse() {
       try {
-        const ofertaId = this.$route.params.id;
-        const token = localStorage.getItem('token'); 
+        const ofertaId = this.$route.params.id; // Obtiene el ID de la oferta desde la ruta
+        const token = localStorage.getItem('token'); // Obtiene el token de autenticación desde el localStorage
         const response = await fetch(`http://localhost:5001/api/ofertas/${ofertaId}/post`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}` // Envía el token en los encabezados
           },
           body: JSON.stringify({
             horarios_seleccionados: this.selectedSlots.map((slot) => {
-              const [day, time] = slot.split("-");
-              return { dia: day, hora_postulacion: [time] };
+              const [day, time] = slot.split("-"); // Divide la clave del slot en día y hora
+              return { dia: day, hora_postulacion: [time] }; // Crea el objeto con el día y hora para la postulación
             }),
           }),
         });
         if (response.ok) {
-          alert("Postulación exitosa");
+          alert("Postulación exitosa"); // Si la postulación fue exitosa, muestra un mensaje
         } else {
-          throw new Error("Error en la postulación");
+          throw new Error("Error en la postulación"); // Si hubo un error, muestra un mensaje de error
         }
       } catch (error) {
-        console.error("Error:", error);
-        alert("Error al postularse");
+        console.error("Error:", error); // Muestra el error en la consola
+        alert("Error al postularse"); // Muestra un mensaje de error
       }
     },
   },
   async mounted() {
-    const ofertaId = this.$route.params.id;
+    const ofertaId = this.$route.params.id; // Obtiene el ID de la oferta desde la ruta
     try {
-      const response = await fetch(`http://localhost:5001/api/ofertas/${ofertaId}`);
-      if (!response.ok) throw new Error("Error al cargar la oferta");
-      this.oferta = await response.json();
+      const response = await fetch(`http://localhost:5001/api/ofertas/${ofertaId}`); // Realiza la solicitud para cargar la oferta
+      if (!response.ok) throw new Error("Error al cargar la oferta"); // Si hubo un error, lanza una excepción
+      this.oferta = await response.json(); // Asigna la oferta cargada al objeto `oferta`
     } catch (error) {
-      console.error("Error al cargar la oferta:", error);
+      console.error("Error al cargar la oferta:", error); // Muestra el error en la consola
     }
   },
 };
 </script>
+
 
 <style scoped>
 .badge {
